@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.example.readsensors.MESSAGE";
+//    public static final String EXTRA_MESSAGE = "com.example.readsensors.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DiscoverActivity.class);
         EditText ipAddress = (EditText) findViewById(R.id.editText5);
         String message = ipAddress.getText().toString();
-        String display = PubSub.discover("127.0.0.1/.well-known/core", 5683, 5000);
-        intent.putExtra(EXTRA_MESSAGE, display);
+        String[] topics = PubSub.discover("127.0.0.1/.well-known/core", 5683, 5000);
+        intent.putExtra("topics", topics);
         startActivity(intent);
     }
 
