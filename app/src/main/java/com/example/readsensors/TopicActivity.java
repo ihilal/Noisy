@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class TopicActivity extends AppCompatActivity {
 
@@ -15,6 +16,13 @@ public class TopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        String pos = intent.getStringExtra("position");
+        String id = intent.getStringExtra("id");
+
+        // Capture the layout's TextView and set the string as its text
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(name);
     }
 
     public void publish(View v){

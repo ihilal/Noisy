@@ -31,14 +31,15 @@ public class DiscoverActivity extends AppCompatActivity {
         listview.setAdapter(displayTopics);
 
         //make list clickable
-//        listview.setOnItemClickListener((AdapterView.OnItemClickListener) this);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> l,View v, int position, long id)
             {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                n.putExtra("position", position);
-                n.putExtra("id", id);
+//                String pos = String.valueOf(position);
+                n.putExtra("name", l.getItemAtPosition(position).toString());
+                n.putExtra("position", String.valueOf(position));
+                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
             }
         });
