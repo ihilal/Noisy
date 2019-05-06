@@ -7,6 +7,23 @@
     tools:context=".TopicActivity">
 
     <Button
+        android:id="@+id/button7"
+        android:layout_width="366dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/holo_orange_dark"
+        android:onClick="createSubTopic"
+        android:text="CREATE NEW TOPIC"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button4" />
+
+    <Button
         android:id="@+id/button5"
         android:layout_width="366dp"
         android:layout_height="52dp"
@@ -16,11 +33,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_orange_dark"
-        android:text="REMOVE"
+        android:text="REMOVE TOPIC"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button4" />
+        app:layout_constraintTop_toBottomOf="@+id/button7" />
 
     <Button
         android:id="@+id/button4"
@@ -32,6 +48,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_orange_dark"
+        android:onClick="subscribe"
         android:text="SUBSCRIBE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
@@ -48,6 +65,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_orange_dark"
+        android:onClick="publish"
         android:text="PUBLISH"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.555"

@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class DiscoverActivity extends AppCompatActivity {
 
@@ -41,6 +42,13 @@ public class DiscoverActivity extends AppCompatActivity {
                 startActivity(n);
             }
         });
+
+    }
+
+    public void createMainTopic(View v){
+        Intent intent = new Intent(this, CreateMainTopicActivity.class);
+        Button createNewTopic = (Button) findViewById(R.id.button);
+        startActivity(intent);
     }
 
 

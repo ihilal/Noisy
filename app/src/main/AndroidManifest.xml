@@ -21,13 +21,17 @@
         <activity
             android:name=".DiscoverActivity"
             android:parentActivityName=".MainActivity">
+
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".TopicActivity">
-        </activity>
+        <activity android:name=".TopicActivity" />
+        <activity android:name=".CreateMainTopicActivity" />
+        <activity android:name=".PublishActivity" />
+        <activity android:name=".SubscribeActivity" />
+        <activity android:name=".CreateSubTopicActivirty"></activity>
     </application>
 
 </manifest>
