@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DiscoverActivity.class);
         EditText ipAddress = (EditText) findViewById(R.id.editText5);
         String message = ipAddress.getText().toString();
-        String[] topics = PubSub.discover("127.0.0.1/.well-known/core", 5683, 5000);
+        String[] topics = PubSub.discover(message, 5683, 5000,".well-known/core");
         intent.putExtra("topics", topics);
         startActivity(intent);
     }

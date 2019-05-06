@@ -6,37 +6,31 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class PublishActivity extends AppCompatActivity {
+public class CreateSubTopicActivity extends AppCompatActivity {
 
-
-    String path1 = "";
+    String path1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_publish);
+        setContentView(R.layout.activity_create_sub_topic_activirty);
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
         String path = intent.getStringExtra("name");
         path1 = path;
 
-
     }
 
-    public void publish(View v){
-        EditText textview = (EditText) findViewById(R.id.editText2);
+    public void create(View v){
+        EditText textview = (EditText) findViewById(R.id.editText3);
         String name = textview.getText().toString();
-        String response = PubSub.publish("130.229.134.2",5683,PubSub.get_path(path1),name,0);
+        EditText textview1 = (EditText) findViewById(R.id.editText4);
+        int ct = Integer.parseInt(textview1.getText().toString());
+        String response = PubSub.create("130.229.134.2",5683,5000,PubSub.get_path(path1),name,ct);
 
-//        TextView textview2 = (TextView) findViewById(R.id.textView2);
-//        TextView textview3 = (TextView) findViewById(R.id.textView3);
-//        textview2.setText(path1);
-//        textview3.setText(PubSub.get_path(path1));
-
-        Toast toast = Toast.makeText(PublishActivity.this, response , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateSubTopicActivity.this, "jhj" , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
         toast.show();
     }

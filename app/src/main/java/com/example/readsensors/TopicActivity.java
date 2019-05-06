@@ -38,7 +38,7 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     public void createSubTopic(View v){
-        Intent intent = new Intent(this, CreateSubTopicActivirty.class);
+        Intent intent = new Intent(this, CreateSubTopicActivity.class);
         Button create = (Button) findViewById(R.id.button7);
         startActivity(intent);
     }
