@@ -12,10 +12,15 @@ public class MainActivity extends AppCompatActivity {
 
 //    public static final String EXTRA_MESSAGE = "com.example.readsensors.MESSAGE";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        EditText ipAddress = (EditText) findViewById(R.id.editText5);
+        ipAddress.setText("130.229.134.209");
     }
 
     public void discover(View v){

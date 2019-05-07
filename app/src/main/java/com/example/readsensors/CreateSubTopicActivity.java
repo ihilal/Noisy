@@ -36,8 +36,8 @@ public class CreateSubTopicActivity extends AppCompatActivity {
         String ip = prefs.getString("ip", "");
         String response = PubSub.create(ip,5683,5000,PubSub.get_path(path1),name,ct);
 
-        Toast toast = Toast.makeText(CreateSubTopicActivity.this, "jhj" , Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
+        Toast toast = Toast.makeText(CreateSubTopicActivity.this, response , Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 }

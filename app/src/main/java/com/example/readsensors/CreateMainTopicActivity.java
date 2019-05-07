@@ -34,7 +34,7 @@ public class CreateMainTopicActivity extends AppCompatActivity {
         String response = PubSub.create(ip,5683,5000,"ps",name,ct);
 
         Toast toast = Toast.makeText(CreateMainTopicActivity.this, response , Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
         startActivity(new Intent(CreateMainTopicActivity.this, DiscoverActivity.class));
