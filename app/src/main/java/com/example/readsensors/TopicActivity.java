@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +14,7 @@ import org.eclipse.californium.core.coap.CoAP;
 
 public class TopicActivity extends AppCompatActivity {
 
-    String name = "";
+    Topic topic = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,10 +22,10 @@ public class TopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        name = intent.getStringExtra("name");
+        String name = intent.getStringExtra("name");
 //        String pos = intent.getStringExtra("position");
 //        String id = intent.getStringExtra("id");
-
+        topic = new Topic(name);
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView);
         textView.setText(name);
@@ -35,7 +34,7 @@ public class TopicActivity extends AppCompatActivity {
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
 //        Button publish = (Button) findViewById(R.id.button3);
-        intent.putExtra("name", name);
+        intent.putExtra("name", topic.makeURI());
         startActivity(intent);
     }
 
@@ -46,9 +45,9 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     public void createSubTopic(View v){
-        Intent intent = new Intent(this, CreateSubTopicActivity.class);
+        Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button create = (Button) findViewById(R.id.button7);
-        intent.putExtra("name", name);
+        intent.putExtra("name", "ps/" + topic.getPath());
         startActivity(intent);
     }
 
@@ -56,8 +55,6 @@ public class TopicActivity extends AppCompatActivity {
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
-
-        Topic topic = new Topic(name);
 
         CoAP.ResponseCode response = PubSub.remove(ip, 5683, topic);
 
