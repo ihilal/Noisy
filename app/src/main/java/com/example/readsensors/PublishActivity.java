@@ -1,6 +1,8 @@
 package com.example.readsensors;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -29,14 +31,18 @@ public class PublishActivity extends AppCompatActivity {
     public void publish(View v){
         EditText textview = (EditText) findViewById(R.id.editText2);
         String name = textview.getText().toString();
-        String response = PubSub.publish("130.229.134.2",5683,PubSub.get_path(path1),name,0);
+
+        //load data
+        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String ip = prefs.getString("ip", "");
+        String response = PubSub.publish(ip,5683,PubSub.get_path(path1),name,0);
 
 //        TextView textview2 = (TextView) findViewById(R.id.textView2);
 //        TextView textview3 = (TextView) findViewById(R.id.textView3);
 //        textview2.setText(path1);
 //        textview3.setText(PubSub.get_path(path1));
 
-        Toast toast = Toast.makeText(PublishActivity.this, response , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(PublishActivity.this, "published" , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
         toast.show();
     }
