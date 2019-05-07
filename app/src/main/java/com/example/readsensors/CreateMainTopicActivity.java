@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.coap.CoAP;
+
 public class CreateMainTopicActivity extends AppCompatActivity {
 
     @Override
@@ -27,13 +29,15 @@ public class CreateMainTopicActivity extends AppCompatActivity {
         EditText textview1 = (EditText) findViewById(R.id.editText6);
         int ct = Integer.parseInt(textview1.getText().toString());
 
+        Topic topic = new Topic(name, ct);
+
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
 
-        String response = PubSub.create(ip,5683,5000,"ps",name,ct);
+        CoAP.ResponseCode response = PubSub.create(ip,5683, "ps", topic );
 
-        Toast toast = Toast.makeText(CreateMainTopicActivity.this, response , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateMainTopicActivity.this, response.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 

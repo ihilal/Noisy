@@ -26,8 +26,13 @@ public class DiscoverActivity extends AppCompatActivity {
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
-        String[] topics = PubSub.discover(ip, 5683, 5000,".well-known/core");
+        Topic[] tops = PubSub.discover(ip, 5683, 5000,".well-known/core");
 
+        String[] topics = new String[tops.length];
+
+        for (int i = 0; i < tops.length; i++) {
+            topics[i] = tops[i].makeURI();
+        }
 
         // Capture the layout's listView and set the string array as its topics
         ListView listview = (ListView) findViewById(R.id.list);

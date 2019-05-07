@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.coap.CoAP;
+
 public class CreateSubTopicActivity extends AppCompatActivity {
 
     String path1;
@@ -31,13 +33,18 @@ public class CreateSubTopicActivity extends AppCompatActivity {
         EditText textview1 = (EditText) findViewById(R.id.editText4);
         int ct = Integer.parseInt(textview1.getText().toString());
 
+        Topic parent = new Topic(path1);
+        Topic topic = new Topic(name, ct);
+
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
-        String response = PubSub.create(ip,5683,5000,PubSub.get_path(path1),name,ct);
+        CoAP.ResponseCode  response = PubSub.create(ip,5683,"ps/" +  parent.getPath(), topic );
 
-        Toast toast = Toast.makeText(CreateSubTopicActivity.this, response , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateSubTopicActivity.this, "ps/" + parent.getPath() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+
+        startActivity(new Intent(CreateSubTopicActivity.this, DiscoverActivity.class));
     }
 }

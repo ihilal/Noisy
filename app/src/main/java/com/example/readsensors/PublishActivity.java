@@ -11,10 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.coap.CoAP;
+
 public class PublishActivity extends AppCompatActivity {
 
 
-    String path1 = "";
+    String path = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,27 +24,28 @@ public class PublishActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        String path = intent.getStringExtra("name");
-        path1 = path;
+        path = intent.getStringExtra("name");
+
 
 
     }
 
     public void publish(View v){
         EditText textview = (EditText) findViewById(R.id.editText2);
-        String name = textview.getText().toString();
+        String content = textview.getText().toString();
+        Topic topic = new Topic(path);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
-        String response = PubSub.publish(ip,5683,PubSub.get_path(path1),name,0);
+        CoAP.ResponseCode response = PubSub.publish(ip,5683, topic, content);
 
 //        TextView textview2 = (TextView) findViewById(R.id.textView2);
 //        TextView textview3 = (TextView) findViewById(R.id.textView3);
 //        textview2.setText(path1);
 //        textview3.setText(PubSub.get_path(path1));
 
-        Toast toast = Toast.makeText(PublishActivity.this, "published" , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
         toast.show();
     }

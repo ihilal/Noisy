@@ -1,70 +1,74 @@
 package com.example.readsensors;
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP;
+
 
 public class PubSub {
 
-    public static String[] discover(String host, int port, long timeout, String path){
-        CoapClient client = new CoapClient("coap", host, port,path);
+    /* Returns array of com.example.readsensors.Topic objects */
+    public static Topic[] discover(String host, int port, long timeout, String path) {
+        CoapClient client = new CoapClient("coap", host, port, path);
         client.setTimeout(timeout);
         String content = client.get().getResponseText();
-        String[] topics = content.split(",");
-        for(int i = 0; i < topics.length; i++) {
-            System.out.println("FOUND TOPIC " + (i+1) + ":      " + topics[i]);
+        String[] topicS = content.split(",");
+        Topic[] topicT = new Topic[topicS.length];
+        for (int i = 0; i < topicS.length; i++) {
+            topicT[i] = new Topic(topicS[i]);
         }
-        return topics;
+        return topicT;
     }
 
-    public static String create(String host, int port, long timeout, String path, String name, int ct){
-        CoapClient client = new CoapClient("coap", host, port,path);
-        StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
-        String payload = sb.toString();
-        CoapResponse resp = client.post(payload,0);
-        String result = resp.getResponseText();
-        return result;
+    /* Returns Confirmation Code */
+    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, path);
+        String payload = topic.makeCreate();
+        CoapResponse resp = client.post(payload, 0);
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
 
-    public static String publish(String host, int port, String path, String payload, int ct){
-        CoapClient client = new CoapClient("coap", host, port,path);
-        CoapResponse resp =         client.put(payload,ct);
-        String result = resp.getResponseText();
+    /* Returns Confirmation Code */
+    public static CoAP.ResponseCode publish(String host, int port, Topic topic, String payload) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+        CoapResponse resp = client.put(payload, topic.getCt());
 
-        return  result;
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
 
-    public static void read(String host, int port, String path){
-        CoapClient client = new CoapClient("coap", host, port,path);
+    /* Returns Content */
+    public static String read(String host, int port, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
         String data = client.get().getResponseText();
-        System.out.println(data);
+
+        return data;
     }
 
-    public static void remove(String host, int port, String path){
-        CoapClient client = new CoapClient("coap", host, port,path);
-        client.delete();
+    /* Returns Confirmation Code */
+    public static CoAP.ResponseCode remove(String host, int port, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+        CoapResponse resp =client.delete();
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
 
+    /* Gets a stream of Content */
+    public static void subscribe(String host, int port, String path) {
+        CoapClient client = new CoapClient("coap", host, port, path);
 
-    public static String get_path(String path ){
+        CoapHandler handler = new CoapHandler() {
+            @Override
+            public void onLoad(CoapResponse coapResponse) {
+                System.out.println(coapResponse.getResponseText());
+            }
 
-        char [] arr = path.toCharArray();
-        String result="";
+            @Override
+            public void onError() {
 
-        for(int i =2 ; i < arr.length; i++){
-
-            if (arr[i]!= '>'){
-
-                result = result + arr[i];
-
-            }else{
-                return result;
-
-           }
-
-
-        }
-
-        return  result;
+            }
+        };
+        client.observe(handler);
+        while (true) ;
     }
-
-
 }

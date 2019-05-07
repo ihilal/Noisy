@@ -33,6 +33,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_orange_dark"
+        android:onClick="remove"
         android:text="REMOVE TOPIC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
