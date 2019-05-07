@@ -1,6 +1,8 @@
 package com.example.readsensors;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +21,12 @@ public class DiscoverActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String[] topics = intent.getStringArrayExtra("topics");
+//        String[] topics = intent.getStringArrayExtra("topics");
+
+        //load data
+        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String ip = prefs.getString("ip", "");
+        String[] topics = PubSub.discover(ip, 5683, 5000,".well-known/core");
 
 
         // Capture the layout's listView and set the string array as its topics
@@ -51,6 +58,7 @@ public class DiscoverActivity extends AppCompatActivity {
         Button createNewTopic = (Button) findViewById(R.id.button);
         startActivity(intent);
     }
+
 
 
 }
