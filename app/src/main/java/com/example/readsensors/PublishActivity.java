@@ -26,8 +26,6 @@ public class PublishActivity extends AppCompatActivity {
         Intent intent = getIntent();
         path = intent.getStringExtra("name");
 
-
-
     }
 
     public void publish(View v){
@@ -41,7 +39,9 @@ public class PublishActivity extends AppCompatActivity {
         CoAP.ResponseCode response = PubSub.publish(ip,5683, topic, content);
 
         Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+
+        textview.setText("");
     }
 }
