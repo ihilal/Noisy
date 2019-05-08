@@ -40,11 +40,6 @@ public class PublishActivity extends AppCompatActivity {
         String ip = prefs.getString("ip", "");
         CoAP.ResponseCode response = PubSub.publish(ip,5683, topic, content);
 
-//        TextView textview2 = (TextView) findViewById(R.id.textView2);
-//        TextView textview3 = (TextView) findViewById(R.id.textView3);
-//        textview2.setText(path1);
-//        textview3.setText(PubSub.get_path(path1));
-
         Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
         toast.show();
