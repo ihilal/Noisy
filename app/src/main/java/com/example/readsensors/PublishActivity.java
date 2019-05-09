@@ -42,5 +42,9 @@ public class PublishActivity extends AppCompatActivity {
         toast.show();
 
         etContent.setText("");
+
+        Intent intent = new Intent(this, TopicActivity.class);
+        intent.putExtra("topic-string", stringTopic);
+        startActivity(intent);
     }
 }
