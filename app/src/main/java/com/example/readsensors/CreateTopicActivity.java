@@ -33,12 +33,18 @@ public class CreateTopicActivity extends AppCompatActivity {
         EditText etCT = (EditText) findViewById(R.id.etCT);
         int ct = Integer.parseInt(etCT.getText().toString());
 
+        //TEMPORARY SOLUTION: convert path array to path string
+        StringBuilder sb = new StringBuilder();
+        for (String p: path) {
+            sb.append(p).append("/");
+        }
+
         Topic topic = new Topic(name, ct);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String address = prefs.getString("address", "");
-        //CoAP.ResponseCode  response = PubSub.create(address,5683, topic, path);
+        CoAP.ResponseCode  response = PubSub.create(address,5683, sb.toString(), topic);
 
         Toast toast = Toast.makeText(CreateTopicActivity.this, path.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
