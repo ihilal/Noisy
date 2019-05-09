@@ -34,7 +34,7 @@ public class TopicActivity extends AppCompatActivity {
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
 //        Button publish = (Button) findViewById(R.id.button3);
-        intent.putExtra("topic-string", topic.makeURI());
+        intent.putExtra("topic-string", topic.toString());
         startActivity(intent);
     }
 
@@ -47,7 +47,7 @@ public class TopicActivity extends AppCompatActivity {
     public void createSubTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button create = (Button) findViewById(R.id.button7);
-        intent.putExtra("stringTopic", topic.getPath());
+        intent.putExtra("path", topic.getPath());
         startActivity(intent);
     }
 
@@ -58,7 +58,7 @@ public class TopicActivity extends AppCompatActivity {
 
         CoAP.ResponseCode response = PubSub.remove(address, 5683, topic);
 
-        Toast toast = Toast.makeText(TopicActivity.this, topic.getPath() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(TopicActivity.this, topic.getPathAsString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 

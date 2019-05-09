@@ -31,7 +31,7 @@ public class DiscoverActivity extends AppCompatActivity {
         String[] stringTopics = new String[topics.length];
 
         for (int i = 0; i < topics.length; i++) {
-            stringTopics[i] = topics[i].makeURI();
+            stringTopics[i] = topics[i].toString();
         }
 
         // Capture the layout's listView and set the string array as its topics
@@ -61,7 +61,8 @@ public class DiscoverActivity extends AppCompatActivity {
     public void createMainTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button createNewTopic = (Button) findViewById(R.id.button);
-        intent.putExtra("stringTopic", "ps/");
+        String[] main_path= new String[] {"ps"};
+        intent.putExtra("path", main_path);
         startActivity(intent);
     }
 

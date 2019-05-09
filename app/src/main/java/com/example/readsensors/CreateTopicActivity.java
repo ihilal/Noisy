@@ -14,7 +14,7 @@ import org.eclipse.californium.core.coap.CoAP;
 
 public class CreateTopicActivity extends AppCompatActivity {
 
-    String path ="";
+    String[] path;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +22,7 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringExtra("stringTopic");
+        path = intent.getStringArrayExtra("path");
 
 
     }
@@ -33,14 +33,20 @@ public class CreateTopicActivity extends AppCompatActivity {
         EditText etCT = (EditText) findViewById(R.id.etCT);
         int ct = Integer.parseInt(etCT.getText().toString());
 
+        //TEMPORARY SOLUTION: convert path array to path string
+        StringBuilder sb = new StringBuilder();
+        for (String p: path) {
+            sb.append(p).append("/");
+        }
+
         Topic topic = new Topic(name, ct);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String address = prefs.getString("address", "");
-        CoAP.ResponseCode  response = PubSub.create(address,5683, path, topic );
+        CoAP.ResponseCode  response = PubSub.create(address,5683, sb.toString(), topic);
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, path , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, path.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
