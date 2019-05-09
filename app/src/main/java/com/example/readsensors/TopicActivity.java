@@ -29,7 +29,19 @@ public class TopicActivity extends AppCompatActivity {
         // Capture the layout's TextView and set the string as its text
         TextView tvTopicString = findViewById(R.id.tvTopicString);
         tvTopicString.setText(stringTopic);
+
+        //display content read
+        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        String address = prefs.getString("address", "");
+        String content = PubSub.read(address, 5683, topic);
+        TextView tvRead = findViewById(R.id.tvRead);
+        tvRead.setText(content);
     }
+
+    public void read(View v){
+        this.recreate();
+    }
+
 
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
