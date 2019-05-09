@@ -21,23 +21,31 @@ public class TopicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_topic);
-        tvRead = findViewById(R.id.tvRead);
+
         // Get the Intent that started this activity
         Intent intent = getIntent();
         String stringTopic = intent.getStringExtra("topic-string");
 //        String pos = intent.getStringExtra("position");
 //        String id = intent.getStringExtra("id");
         topic = new Topic(stringTopic);
-        // Capture the layout's TextView and set the string as its text
-        TextView tvTopicString = findViewById(R.id.tvTopicString);
-        tvTopicString.setText(stringTopic);
 
-        //display content read
-        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        address = prefs.getString("address", "");
-        content = PubSub.read(address, 5683, topic);
-        tvRead.setText(content);
+        if(topic.getCt() == 0){
+            setContentView(R.layout.activity_topic_ct0);
+            // Capture the layout's TextView and set the string as its text
+            TextView tvTopicString = findViewById(R.id.tvTopicString);
+            tvTopicString.setText(stringTopic);
+            tvRead = findViewById(R.id.tvRead);
+            //display content read
+            prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+            address = prefs.getString("address", "");
+            content = PubSub.read(address, 5683, topic);
+            tvRead.setText(content);
+        }else if(topic.getCt() == 40){
+            setContentView(R.layout.activity_topic_ct40);
+            TextView tvTopicString = findViewById(R.id.tvTopicString2);
+            tvTopicString.setText(stringTopic);
+        }
+
     }
 
     public void read(View v) {
