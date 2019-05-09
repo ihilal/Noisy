@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +15,7 @@ import org.eclipse.californium.core.coap.CoAP;
 
 public class CreateTopicActivity extends AppCompatActivity {
 
-    String[] path;
+    Topic parent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +23,10 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringArrayExtra("path");
+        String strParent;
+        if (intent.hasExtra("topic-string")) {
+            parent = new Topic(intent.getStringExtra("topic-string"));
+        }
 
 
     }
@@ -33,20 +37,21 @@ public class CreateTopicActivity extends AppCompatActivity {
         EditText etCT = (EditText) findViewById(R.id.etCT);
         int ct = Integer.parseInt(etCT.getText().toString());
 
-        //TEMPORARY SOLUTION: convert path array to path string
-        StringBuilder sb = new StringBuilder();
-        for (String p: path) {
-            sb.append(p).append("/");
-        }
+
 
         Topic topic = new Topic(name, ct);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String address = prefs.getString("address", "");
-        CoAP.ResponseCode  response = PubSub.create(address,5683, sb.toString(), topic);
+        CoAP.ResponseCode response;
+        if (parent != null)
+            response = PubSub.create(address,5683, parent, topic);
+        else {
+            response = PubSub.create(address, 5683, topic);
+        }
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, path.toString() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, response.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 

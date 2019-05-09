@@ -3,9 +3,8 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 
@@ -24,14 +23,40 @@ public class PubSub {
         return topicT;
     }
 
-    /* Returns Confirmation Code */
-    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
-        CoapClient client = new CoapClient("coap", host, port, path);
+//    /* Returns Confirmation Code */
+//    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
+//        CoapClient client = new CoapClient("coap", host, port, path);
+//        String payload = topic.makeCreate();
+//        CoapResponse resp = client.post(payload, 0);
+//
+//        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+//    }
+
+
+    /* ------------------------------ */
+
+    public static CoAP.ResponseCode create(String host, int port, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, "ps");
         String payload = topic.makeCreate();
         CoapResponse resp = client.post(payload, 0);
 
+        topic.setPath();
+
         return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
+
+    public static CoAP.ResponseCode create(String host, int port, Topic parent, Topic child) {
+        CoapClient client = new CoapClient("coap", host, port, parent.getPath());
+        String payload = child.makeCreate();
+        CoapResponse resp = client.post(payload, 0);
+
+        child.setPath(parent);
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+    }
+
+    /* ------------------------------ */
+
 
     /* Returns Confirmation Code */
     public static CoAP.ResponseCode publish(String host, int port, Topic topic, String payload) {
@@ -75,7 +100,6 @@ public class PubSub {
         client.observe(handler);
         while (true) ;
     }
-
     public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
 
         System.out.println("Fake Subscribe");
@@ -85,7 +109,7 @@ public class PubSub {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
         while(true) {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.MILLISECONDS.sleep(5);
 
             CoapClient client = new CoapClient("coap", host, port, path);
 
@@ -93,6 +117,7 @@ public class PubSub {
             if(!newData.equals(oldData)){
                 System.out.println();
                 System.out.println(sdf.format(cal.getTime())+": "+newData);
+                oldData = newData;
             }
         }
     }
