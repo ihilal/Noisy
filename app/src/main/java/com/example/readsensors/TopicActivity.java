@@ -70,8 +70,8 @@ public class TopicActivity extends AppCompatActivity {
 
     public void remove(View v){
         //load data
-        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String address = prefs.getString("address", "");
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        address = prefs.getString("address", "");
 
         CoAP.ResponseCode response = PubSub.remove(address, 5683, topic);
 
