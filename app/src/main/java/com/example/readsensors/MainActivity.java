@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         //save data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("ip", message);
+        editor.putString("address", message);
         editor.commit();
 
 //        String[] topics = PubSub.discover(message, 5683, 5000,".well-known/core");

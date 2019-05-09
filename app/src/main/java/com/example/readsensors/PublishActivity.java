@@ -24,7 +24,7 @@ public class PublishActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringExtra("name");
+        path = intent.getStringExtra("topic-string");
 
     }
 
@@ -35,7 +35,7 @@ public class PublishActivity extends AppCompatActivity {
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
+        String ip = prefs.getString("address", "");
         CoAP.ResponseCode response = PubSub.publish(ip,5683, topic, content);
 
         Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);

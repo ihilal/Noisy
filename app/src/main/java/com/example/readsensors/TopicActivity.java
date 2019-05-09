@@ -22,7 +22,7 @@ public class TopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
+        String name = intent.getStringExtra("topic-string");
 //        String pos = intent.getStringExtra("position");
 //        String id = intent.getStringExtra("id");
         topic = new Topic(name);
@@ -34,7 +34,7 @@ public class TopicActivity extends AppCompatActivity {
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
 //        Button publish = (Button) findViewById(R.id.button3);
-        intent.putExtra("name", topic.makeURI());
+        intent.putExtra("topic-string", topic.makeURI());
         startActivity(intent);
     }
 
@@ -47,14 +47,14 @@ public class TopicActivity extends AppCompatActivity {
     public void createSubTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button create = (Button) findViewById(R.id.button7);
-        intent.putExtra("name", topic.getPath());
+        intent.putExtra("path", topic.getPath());
         startActivity(intent);
     }
 
     public void remove(View v){
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
+        String ip = prefs.getString("address", "");
 
         CoAP.ResponseCode response = PubSub.remove(ip, 5683, topic);
 

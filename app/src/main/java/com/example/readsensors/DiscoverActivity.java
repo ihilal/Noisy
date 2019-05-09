@@ -25,7 +25,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
+        String ip = prefs.getString("address", "");
         Topic[] tops = PubSub.discover(ip, 5683, 5000,".well-known/core");
 
         String[] topics = new String[tops.length];
@@ -49,7 +49,7 @@ public class DiscoverActivity extends AppCompatActivity {
             {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
 //                String pos = String.valueOf(position);
-                n.putExtra("name", l.getItemAtPosition(position).toString());
+                n.putExtra("topic-string", l.getItemAtPosition(position).toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
@@ -61,7 +61,7 @@ public class DiscoverActivity extends AppCompatActivity {
     public void createMainTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button createNewTopic = (Button) findViewById(R.id.button);
-        intent.putExtra("name", "ps/");
+        intent.putExtra("path", "ps/");
         startActivity(intent);
     }
 
