@@ -10,34 +10,40 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class CreateMainTopicActivity extends AppCompatActivity {
+import org.eclipse.californium.core.coap.CoAP;
 
+public class CreateTopicActivity extends AppCompatActivity {
+
+    String path ="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_main_topic);
+        setContentView(R.layout.activity_create_topic_activity);
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
+        path = intent.getStringExtra("name");
+
+
     }
 
     public void create(View v){
-        EditText textview = (EditText) findViewById(R.id.editText);
+        EditText textview = (EditText) findViewById(R.id.editText3);
         String name = textview.getText().toString();
-        EditText textview1 = (EditText) findViewById(R.id.editText6);
+        EditText textview1 = (EditText) findViewById(R.id.editText4);
         int ct = Integer.parseInt(textview1.getText().toString());
+
+        Topic topic = new Topic(name, ct);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
+        CoAP.ResponseCode  response = PubSub.create(ip,5683, path, topic );
 
-        String response = PubSub.create(ip,5683,5000,"ps",name,ct);
-
-        Toast toast = Toast.makeText(CreateMainTopicActivity.this, response , Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.LEFT, 350, 500);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, path , Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-        startActivity(new Intent(CreateMainTopicActivity.this, DiscoverActivity.class));
+        startActivity(new Intent(CreateTopicActivity.this, DiscoverActivity.class));
     }
-
 }

@@ -26,8 +26,13 @@ public class DiscoverActivity extends AppCompatActivity {
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         String ip = prefs.getString("ip", "");
-        String[] topics = PubSub.discover(ip, 5683, 5000,".well-known/core");
+        Topic[] tops = PubSub.discover(ip, 5683, 5000,".well-known/core");
 
+        String[] topics = new String[tops.length];
+
+        for (int i = 0; i < tops.length; i++) {
+            topics[i] = tops[i].makeURI();
+        }
 
         // Capture the layout's listView and set the string array as its topics
         ListView listview = (ListView) findViewById(R.id.list);
@@ -45,8 +50,8 @@ public class DiscoverActivity extends AppCompatActivity {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
 //                String pos = String.valueOf(position);
                 n.putExtra("name", l.getItemAtPosition(position).toString());
-                n.putExtra("position", String.valueOf(position));
-                n.putExtra("id", String.valueOf(id));
+//                n.putExtra("position", String.valueOf(position));
+//                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
             }
         });
@@ -54,8 +59,9 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     public void createMainTopic(View v){
-        Intent intent = new Intent(this, CreateMainTopicActivity.class);
-        Button createNewTopic = (Button) findViewById(R.id.button);
+        Intent intent = new Intent(this, CreateTopicActivity.class);
+//        Button createNewTopic = (Button) findViewById(R.id.button);
+        intent.putExtra("name", "ps/");
         startActivity(intent);
     }
 
