@@ -50,8 +50,8 @@ public class DiscoverActivity extends AppCompatActivity {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
 //                String pos = String.valueOf(position);
                 n.putExtra("name", l.getItemAtPosition(position).toString());
-                n.putExtra("position", String.valueOf(position));
-                n.putExtra("id", String.valueOf(id));
+//                n.putExtra("position", String.valueOf(position));
+//                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
             }
         });
