@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.eclipse.californium.core.coap.CoAP;
@@ -16,7 +15,7 @@ import org.eclipse.californium.core.coap.CoAP;
 public class PublishActivity extends AppCompatActivity {
 
 
-    String path = "";
+    String stringTopic = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,19 +23,19 @@ public class PublishActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringExtra("topic-string");
+        stringTopic = intent.getStringExtra("topic-string");
 
     }
 
     public void publish(View v){
         EditText textview = (EditText) findViewById(R.id.editText2);
         String content = textview.getText().toString();
-        Topic topic = new Topic(path);
+        Topic topic = new Topic(stringTopic);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("address", "");
-        CoAP.ResponseCode response = PubSub.publish(ip,5683, topic, content);
+        String address = prefs.getString("address", "");
+        CoAP.ResponseCode response = PubSub.publish(address,5683, topic, content);
 
         Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);

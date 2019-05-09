@@ -22,7 +22,7 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringExtra("path");
+        path = intent.getStringExtra("stringTopic");
 
 
     }
@@ -37,8 +37,8 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("address", "");
-        CoAP.ResponseCode  response = PubSub.create(ip,5683, path, topic );
+        String address = prefs.getString("address", "");
+        CoAP.ResponseCode  response = PubSub.create(address,5683, path, topic );
 
         Toast toast = Toast.makeText(CreateTopicActivity.this, path , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);

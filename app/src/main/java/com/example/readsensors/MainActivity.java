@@ -26,15 +26,15 @@ public class MainActivity extends AppCompatActivity {
     public void discover(View v){
         Intent intent = new Intent(this, DiscoverActivity.class);
         EditText ipAddress = (EditText) findViewById(R.id.editText5);
-        String message = ipAddress.getText().toString();
+        String address = ipAddress.getText().toString();
 
         //save data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("address", message);
+        editor.putString("address", address);
         editor.commit();
 
-//        String[] topics = PubSub.discover(message, 5683, 5000,".well-known/core");
+//        String[] topics = PubSub.discover(address, 5683, 5000,".well-known/core");
 //        intent.putExtra("topics", topics);
         startActivity(intent);
     }
