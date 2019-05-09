@@ -31,7 +31,7 @@ public class DiscoverActivity extends AppCompatActivity {
         String[] stringTopics = new String[topics.length];
 
         for (int i = 0; i < topics.length; i++) {
-            stringTopics[i] = topics[i].makeURI();
+            stringTopics[i] = topics[i].toString();
         }
 
         // Capture the layout's listView and set the string array as its topics
