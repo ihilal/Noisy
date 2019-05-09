@@ -19,13 +19,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText ipAddress = (EditText) findViewById(R.id.editText5);
+        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
         ipAddress.setText("130.229.148.135");
     }
 
     public void discover(View v){
         Intent intent = new Intent(this, DiscoverActivity.class);
-        EditText ipAddress = (EditText) findViewById(R.id.editText5);
+        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
         String address = ipAddress.getText().toString();
 
         //save data

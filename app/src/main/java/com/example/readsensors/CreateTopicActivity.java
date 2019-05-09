@@ -28,10 +28,10 @@ public class CreateTopicActivity extends AppCompatActivity {
     }
 
     public void create(View v){
-        EditText textview = (EditText) findViewById(R.id.editText3);
-        String name = textview.getText().toString();
-        EditText textview1 = (EditText) findViewById(R.id.editText4);
-        int ct = Integer.parseInt(textview1.getText().toString());
+        EditText etName = (EditText) findViewById(R.id.etName);
+        String name = etName.getText().toString();
+        EditText etCT = (EditText) findViewById(R.id.etCT);
+        int ct = Integer.parseInt(etCT.getText().toString());
 
         Topic topic = new Topic(name, ct);
 

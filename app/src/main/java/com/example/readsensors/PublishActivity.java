@@ -28,8 +28,8 @@ public class PublishActivity extends AppCompatActivity {
     }
 
     public void publish(View v){
-        EditText textview = (EditText) findViewById(R.id.editText2);
-        String content = textview.getText().toString();
+        EditText etContent = (EditText) findViewById(R.id.etContent);
+        String content = etContent.getText().toString();
         Topic topic = new Topic(stringTopic);
 
         //load data
@@ -41,6 +41,6 @@ public class PublishActivity extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-        textview.setText("");
+        etContent.setText("");
     }
 }

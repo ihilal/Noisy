@@ -27,8 +27,8 @@ public class TopicActivity extends AppCompatActivity {
 //        String id = intent.getStringExtra("id");
         topic = new Topic(stringTopic);
         // Capture the layout's TextView and set the string as its text
-        TextView textView = findViewById(R.id.textView);
-        textView.setText(stringTopic);
+        TextView tvTopicString = findViewById(R.id.tvTopicString);
+        tvTopicString.setText(stringTopic);
     }
 
     public void publish(View v){
