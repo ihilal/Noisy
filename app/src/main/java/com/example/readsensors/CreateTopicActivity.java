@@ -25,11 +25,7 @@ public class CreateTopicActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String strParent;
         if (intent.hasExtra("topic-string")) {
-            strParent = intent.getStringExtra("topic-string");
-            Toast toast = Toast.makeText(this, strParent , Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-            parent = new Topic(strParent);
+            parent = new Topic(intent.getStringExtra("topic-string"));
         }
 
 
