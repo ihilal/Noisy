@@ -4,10 +4,14 @@ import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
 
 public class PubSub {
 
-    /* Returns array of com.example.readsensors.Topic objects */
+    /* Returns array of Topic objects */
     public static Topic[] discover(String host, int port, long timeout, String path) {
         CoapClient client = new CoapClient("coap", host, port, path);
         client.setTimeout(timeout);
@@ -70,5 +74,26 @@ public class PubSub {
         };
         client.observe(handler);
         while (true) ;
+    }
+
+    public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
+
+        System.out.println("Fake Subscribe");
+
+        String newData, oldData=null;
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+        while(true) {
+            TimeUnit.SECONDS.sleep(5);
+
+            CoapClient client = new CoapClient("coap", host, port, path);
+
+            newData = client.get().getResponseText();
+            if(!newData.equals(oldData)){
+                System.out.println();
+                System.out.println(sdf.format(cal.getTime())+": "+newData);
+            }
+        }
     }
 }
