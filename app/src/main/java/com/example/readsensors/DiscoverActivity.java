@@ -61,7 +61,7 @@ public class DiscoverActivity extends AppCompatActivity {
     public void createMainTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button createNewTopic = (Button) findViewById(R.id.button);
-        intent.putExtra("stringTopic", "ps/");
+        intent.putExtra("path", "ps/");
         startActivity(intent);
     }
 
