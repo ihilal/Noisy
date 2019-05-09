@@ -25,13 +25,13 @@ public class DiscoverActivity extends AppCompatActivity {
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
-        Topic[] tops = PubSub.discover(ip, 5683, 5000,".well-known/core");
+        String address = prefs.getString("address", "");
+        Topic[] topics = PubSub.discover(address, 5683, 5000,".well-known/core");
 
-        String[] topics = new String[tops.length];
+        String[] stringTopics = new String[topics.length];
 
-        for (int i = 0; i < tops.length; i++) {
-            topics[i] = tops[i].makeURI();
+        for (int i = 0; i < topics.length; i++) {
+            stringTopics[i] = topics[i].makeURI();
         }
 
         // Capture the layout's listView and set the string array as its topics
@@ -39,7 +39,7 @@ public class DiscoverActivity extends AppCompatActivity {
         ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                topics);
+                stringTopics);
         listview.setAdapter(displayTopics);
 
         //make list clickable
@@ -49,7 +49,7 @@ public class DiscoverActivity extends AppCompatActivity {
             {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
 //                String pos = String.valueOf(position);
-                n.putExtra("name", l.getItemAtPosition(position).toString());
+                n.putExtra("topic-string", l.getItemAtPosition(position).toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
@@ -61,7 +61,7 @@ public class DiscoverActivity extends AppCompatActivity {
     public void createMainTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button createNewTopic = (Button) findViewById(R.id.button);
-        intent.putExtra("name", "ps/");
+        intent.putExtra("stringTopic", "ps/");
         startActivity(intent);
     }
 

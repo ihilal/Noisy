@@ -6,7 +6,7 @@ public class Topic {
     private String path;
     private int ct;
 
-    /* Takes a URI and extracts the name, path and ct from it */
+    /* Takes a URI and extracts the name, stringTopic and ct from it */
     public Topic(String format) {
         String[] small = format.split(";");
         this.ct = Integer.parseInt(small[1].substring(small[1].indexOf('=') + 1));
@@ -26,7 +26,7 @@ public class Topic {
         this.ct = ct;
     }
 
-    /* Takes name, path and ct and makes them into a universal URI */
+    /* Takes name, stringTopic and ct and makes them into a universal URI */
     public String makeURI(){
         StringBuilder sb = new StringBuilder().append("<").append(getPath()).append(">;ct=").append(getCt());
         return sb.toString();

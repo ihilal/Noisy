@@ -19,22 +19,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText ipAddress = (EditText) findViewById(R.id.editText5);
+        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
         ipAddress.setText("130.229.148.135");
     }
 
     public void discover(View v){
         Intent intent = new Intent(this, DiscoverActivity.class);
-        EditText ipAddress = (EditText) findViewById(R.id.editText5);
-        String message = ipAddress.getText().toString();
+        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
+        String address = ipAddress.getText().toString();
 
         //save data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("ip", message);
+        editor.putString("address", address);
         editor.commit();
 
-//        String[] topics = PubSub.discover(message, 5683, 5000,".well-known/core");
+//        String[] topics = PubSub.discover(address, 5683, 5000,".well-known/core");
 //        intent.putExtra("topics", topics);
         startActivity(intent);
     }

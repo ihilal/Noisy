@@ -22,19 +22,19 @@ public class TopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
+        String stringTopic = intent.getStringExtra("topic-string");
 //        String pos = intent.getStringExtra("position");
 //        String id = intent.getStringExtra("id");
-        topic = new Topic(name);
+        topic = new Topic(stringTopic);
         // Capture the layout's TextView and set the string as its text
-        TextView textView = findViewById(R.id.textView);
-        textView.setText(name);
+        TextView tvTopicString = findViewById(R.id.tvTopicString);
+        tvTopicString.setText(stringTopic);
     }
 
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
 //        Button publish = (Button) findViewById(R.id.button3);
-        intent.putExtra("name", topic.makeURI());
+        intent.putExtra("topic-string", topic.makeURI());
         startActivity(intent);
     }
 
@@ -47,16 +47,16 @@ public class TopicActivity extends AppCompatActivity {
     public void createSubTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
 //        Button create = (Button) findViewById(R.id.button7);
-        intent.putExtra("name", topic.getPath());
+        intent.putExtra("stringTopic", topic.getPath());
         startActivity(intent);
     }
 
     public void remove(View v){
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
+        String address = prefs.getString("address", "");
 
-        CoAP.ResponseCode response = PubSub.remove(ip, 5683, topic);
+        CoAP.ResponseCode response = PubSub.remove(address, 5683, topic);
 
         Toast toast = Toast.makeText(TopicActivity.this, topic.getPath() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);

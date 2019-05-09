@@ -22,23 +22,23 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        path = intent.getStringExtra("name");
+        path = intent.getStringExtra("stringTopic");
 
 
     }
 
     public void create(View v){
-        EditText textview = (EditText) findViewById(R.id.editText3);
-        String name = textview.getText().toString();
-        EditText textview1 = (EditText) findViewById(R.id.editText4);
-        int ct = Integer.parseInt(textview1.getText().toString());
+        EditText etName = (EditText) findViewById(R.id.etName);
+        String name = etName.getText().toString();
+        EditText etCT = (EditText) findViewById(R.id.etCT);
+        int ct = Integer.parseInt(etCT.getText().toString());
 
         Topic topic = new Topic(name, ct);
 
         //load data
         SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String ip = prefs.getString("ip", "");
-        CoAP.ResponseCode  response = PubSub.create(ip,5683, path, topic );
+        String address = prefs.getString("address", "");
+        CoAP.ResponseCode  response = PubSub.create(address,5683, path, topic );
 
         Toast toast = Toast.makeText(CreateTopicActivity.this, path , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
