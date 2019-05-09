@@ -13,13 +13,16 @@ import android.widget.Toast;
 import org.eclipse.californium.core.coap.CoAP;
 
 public class TopicActivity extends AppCompatActivity {
+    TextView tvRead;
+    SharedPreferences prefs;
+    String content, address;
 
     Topic topic = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
-
+        tvRead = findViewById(R.id.tvRead);
         // Get the Intent that started this activity
         Intent intent = getIntent();
         String stringTopic = intent.getStringExtra("topic-string");
@@ -31,15 +34,17 @@ public class TopicActivity extends AppCompatActivity {
         tvTopicString.setText(stringTopic);
 
         //display content read
-        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String address = prefs.getString("address", "");
-        String content = PubSub.read(address, 5683, topic);
-        TextView tvRead = findViewById(R.id.tvRead);
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        address = prefs.getString("address", "");
+        content = PubSub.read(address, 5683, topic);
         tvRead.setText(content);
     }
 
-    public void read(View v){
-        this.recreate();
+    public void read(View v) {
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        address = prefs.getString("address", "");
+        content = PubSub.read(address, 5683, topic);
+        tvRead.setText(content);
     }
 
 
