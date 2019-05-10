@@ -27,7 +27,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".TopicActivity" />
+        <activity
+            android:name=".TopicActivity"
+            android:parentActivityName=".DiscoverActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DiscoverActivity" />
+        </activity>
         <activity android:name=".PublishActivity" />
         <activity android:name=".SubscribeActivity" />
         <activity android:name=".CreateTopicActivity"></activity>

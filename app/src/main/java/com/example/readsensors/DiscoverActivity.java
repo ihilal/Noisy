@@ -28,7 +28,6 @@ public class DiscoverActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-//        String[] topics = intent.getStringArrayExtra("topics");
 
         //load data
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
@@ -55,7 +54,6 @@ public class DiscoverActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> l,View v, int position, long id)
             {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-//                String pos = String.valueOf(position);
                 n.putExtra("topic-string", l.getItemAtPosition(position).toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
@@ -82,7 +80,6 @@ public class DiscoverActivity extends AppCompatActivity {
 
     public void createMainTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
-//        Button createNewTopic = (Button) findViewById(R.id.button);
         startActivity(intent);
     }
 
@@ -111,7 +108,6 @@ public class DiscoverActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> l,View v, int position, long id)
             {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-//                String pos = String.valueOf(position);
                 n.putExtra("topic-string", l.getItemAtPosition(position).toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
