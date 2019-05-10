@@ -10,10 +10,6 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static final String EXTRA_MESSAGE = "com.example.readsensors.MESSAGE";
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("address", address);
         editor.commit();
 
-//        String[] topics = PubSub.discover(address, 5683, 5000,".well-known/core");
-//        intent.putExtra("topics", topics);
         startActivity(intent);
     }
 

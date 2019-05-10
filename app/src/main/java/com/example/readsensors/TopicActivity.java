@@ -58,20 +58,17 @@ public class TopicActivity extends AppCompatActivity {
 
     public void publish(View v){
         Intent intent = new Intent(this, PublishActivity.class);
-//        Button publish = (Button) findViewById(R.id.button3);
         intent.putExtra("topic-string", topic.toString());
         startActivity(intent);
     }
 
     public void subscribe(View v){
         Intent intent = new Intent(this, SubscribeActivity.class);
-//        Button subscribe = (Button) findViewById(R.id.button4);
         startActivity(intent);
     }
 
     public void createSubTopic(View v){
         Intent intent = new Intent(this, CreateTopicActivity.class);
-//        Button create = (Button) findViewById(R.id.button7);
         intent.putExtra("topic-string", topic.toString());
         startActivity(intent);
     }
