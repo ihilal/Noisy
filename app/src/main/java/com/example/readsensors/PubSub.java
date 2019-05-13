@@ -1,4 +1,9 @@
 package com.example.readsensors;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.Bindable;
+import android.databinding.ObservableField;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -8,10 +13,12 @@ import org.eclipse.californium.core.coap.Token;
 
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 
 public class PubSub {
+
 
     /* Returns array of Topic objects */
     public static Topic[] discover(String host, int port, long timeout, String path) {
@@ -86,7 +93,9 @@ public class PubSub {
     }
 
     /* Gets a stream of Content */
-    public static void subscribe(String host, int port, String path) {
+    public static SubscribeListener subscribe(String host, int port, String path) {
+
+        final SubscribeListener listener = new SubscribeListener();
         CoapClient client = new CoapClient("coap", host, port, path);
         Request req = new Request(CoAP.Code.GET);
         req.setURI("coap://"+host+":"+port+"/"+path);
@@ -98,16 +107,16 @@ public class PubSub {
         CoapHandler handler = new CoapHandler() {
             @Override
             public void onLoad(CoapResponse coapResponse) {
-                System.out.println(coapResponse.getResponseText());
+                listener.setData(coapResponse.getResponseText());
             }
 
             @Override
             public void onError() {
-
+                listener.setData("error");
             }
         };
-        client.observe(handler);
-        return;
+        client.observe(req, handler);
+        return listener;
     }
     public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
 
