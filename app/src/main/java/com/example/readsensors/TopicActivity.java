@@ -64,6 +64,7 @@ public class TopicActivity extends AppCompatActivity {
 
     public void subscribe(View v){
         Intent intent = new Intent(this, SubscribeActivity.class);
+        intent.putExtra("topic-path", topic.getPathString());
         startActivity(intent);
     }
 

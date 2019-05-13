@@ -3,6 +3,9 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Token;
+
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +88,12 @@ public class PubSub {
     /* Gets a stream of Content */
     public static void subscribe(String host, int port, String path) {
         CoapClient client = new CoapClient("coap", host, port, path);
+        Request req = new Request(CoAP.Code.GET);
+        req.setURI("coap://"+host+":"+port+"/"+path);
+        req.setObserve();
+        byte i[] = {0x21};
+        Token tt = new Token(i);
+        req.setToken(tt);
 
         CoapHandler handler = new CoapHandler() {
             @Override
@@ -98,7 +107,7 @@ public class PubSub {
             }
         };
         client.observe(handler);
-        while (true) ;
+        return;
     }
     public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
 
