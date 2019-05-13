@@ -81,7 +81,7 @@ public class TopicActivity extends AppCompatActivity {
 
         CoAP.ResponseCode response = PubSub.remove(address, 5683, topic);
 
-        Toast toast = Toast.makeText(TopicActivity.this, response.toString() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(TopicActivity.this, response.name() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 

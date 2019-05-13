@@ -51,7 +51,7 @@ public class CreateTopicActivity extends AppCompatActivity {
             response = PubSub.create(address, 5683, topic);
         }
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, response.toString() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, response.name() , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
