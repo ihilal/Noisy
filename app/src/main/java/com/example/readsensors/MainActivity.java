@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         EditText ipAddress = (EditText) findViewById(R.id.etAddress);
-        ipAddress.setText("130.229.178.80");
+        ipAddress.setText("192.168.42.19");
     }
 
     public void discover(View v){

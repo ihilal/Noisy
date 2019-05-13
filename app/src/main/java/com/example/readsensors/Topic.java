@@ -9,7 +9,18 @@ public class Topic {
     /* Takes a URI and extracts the name, path and ct from it */
     public Topic(String format) {
         String[] small = format.split(";");
-        this.ct = Integer.parseInt(small[1].substring(small[1].indexOf('=') + 1));
+
+
+        /* Handle content type errors */
+        StringBuilder sb = new StringBuilder();
+        try {
+            this.ct = Integer.parseInt(sb.append(small[1].charAt(small[1].indexOf('=') + 1)).append(small[1].charAt(small[1].indexOf('=') + 2)).toString());
+        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException | NumberFormatException e){
+            sb = new StringBuilder();
+            this.ct = Integer.parseInt(sb.append(small[1].charAt(small[1].indexOf('=') + 1)).toString());
+        }
+
+//        this.ct = Integer.parseInt(small[1].substring(small[1].indexOf('=') + 1));
         String p = small[0].replace('<', ' ').replace('>', ' ').trim();
         String pathS = p.substring(p.indexOf('/') + 1);
         path = pathS.split("/");
@@ -29,7 +40,7 @@ public class Topic {
         return sb.toString();
     }
 
-    /* Takes name and ct and makes them intp a URI for the CREATE command*/
+    /* Takes name and ct and makes them into a URI for the CREATE command*/
     public String makeCreate() {
         StringBuilder sb = new StringBuilder().append("<").append(getName()).append(">;ct=").append(getCt());
         return sb.toString();
@@ -53,7 +64,7 @@ public class Topic {
         this.path = array;
     }
 
-    public void setPath(){
+    public void setPath() {
         String[] p = new String[2];
         p[0] = "ps";
         p[1] = this.name;
