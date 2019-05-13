@@ -1,14 +1,11 @@
 package com.example.readsensors;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.ObservableField;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SubscribeActivity extends AppCompatActivity {
     TextView tvContentSubscribe;

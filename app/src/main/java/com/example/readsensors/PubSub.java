@@ -1,8 +1,4 @@
 package com.example.readsensors;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.Bindable;
-import android.databinding.ObservableField;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
@@ -10,11 +6,6 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
-
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
-import java.util.Observable;
-import java.util.concurrent.TimeUnit;
 
 
 public class PubSub {
@@ -117,26 +108,5 @@ public class PubSub {
         };
         client.observe(req, handler);
         return listener;
-    }
-    public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
-
-        System.out.println("Fake Subscribe");
-
-        String newData, oldData=null;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        while(true) {
-            TimeUnit.MILLISECONDS.sleep(5);
-
-            CoapClient client = new CoapClient("coap", host, port, path);
-
-            newData = client.get().getResponseText();
-            if(!newData.equals(oldData)){
-                System.out.println();
-                System.out.println(sdf.format(cal.getTime())+": "+newData);
-                oldData = newData;
-            }
-        }
     }
 }
