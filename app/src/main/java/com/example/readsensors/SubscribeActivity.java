@@ -5,12 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.SimpleTimeZone;
+
 public class SubscribeActivity extends AppCompatActivity {
-    TextView tvContentSubscribe;
+
+    ListView listview;
     SharedPreferences prefs;
     String address;
+    ArrayList<String> dataArray= new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +34,33 @@ public class SubscribeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String path = intent.getStringExtra("topic-path");
 
-        tvContentSubscribe = findViewById(R.id.contentSubscribe);
+        listview = findViewById(R.id.listSubscribe);
 
         final SubscribeListener data = PubSub.subscribe(address, 5683, path);
+
+        final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                dataArray);
+        listview.setAdapter(displayData);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
 
         data.setListener(new SubscribeListener.ChangeListener() {
             @Override
             public void onChange() {
-                tvContentSubscribe.setText(data.getData());
+                String time = sdf.format(Calendar.getInstance().getTime());
+                dataArray.add(time + ":   " + data.getData());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayData.notifyDataSetChanged();
+                        listview.setSelection(displayData.getCount() - 1);
+                    }
+                });
+
             }
         });
     }
