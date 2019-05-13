@@ -32,12 +32,16 @@ public class DiscoverActivity extends AppCompatActivity {
         //load data
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         address = prefs.getString("address", "");
-        Topic[] topics = PubSub.discover(address, 5683, 5000,".well-known/core");
+        Topic[] topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
 
         String[] stringTopics = new String[topics.length];
 
-        for (int i = 0; i < topics.length; i++) {
-            stringTopics[i] = topics[i].toString();
+        if (!topics[0].toString().equals("</ps>;ct=40")){
+            for (int i = 0; i < topics.length; i++) {
+                stringTopics[i] = topics[i].toString();
+            }
+        } else {
+            stringTopics = new String[0];
         }
 
         // Capture the layout's listView and set the string array as its topics
