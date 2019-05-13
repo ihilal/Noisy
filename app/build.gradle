@@ -17,6 +17,10 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     packagingOptions {
         exclude 'notice.html'
         exclude '3rd-party/APACHE-LICENSE-2.0.txt'
@@ -43,5 +47,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.eclipse.californium:californium-core:2.0.0-M14"
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 
 }

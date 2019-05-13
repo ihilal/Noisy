@@ -1,14 +1,15 @@
 package com.example.readsensors;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
-import java.util.concurrent.TimeUnit;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Token;
 
 
 public class PubSub {
+
 
     /* Returns array of Topic objects */
     public static Topic[] discover(String host, int port, long timeout, String path) {
@@ -83,42 +84,29 @@ public class PubSub {
     }
 
     /* Gets a stream of Content */
-    public static void subscribe(String host, int port, String path) {
+    public static SubscribeListener subscribe(String host, int port, String path) {
+
+        final SubscribeListener listener = new SubscribeListener();
         CoapClient client = new CoapClient("coap", host, port, path);
+        Request req = new Request(CoAP.Code.GET);
+        req.setURI("coap://"+host+":"+port+"/"+path);
+        req.setObserve();
+        byte i[] = {0x21};
+        Token tt = new Token(i);
+        req.setToken(tt);
 
         CoapHandler handler = new CoapHandler() {
             @Override
             public void onLoad(CoapResponse coapResponse) {
-                System.out.println(coapResponse.getResponseText());
+                listener.setData(coapResponse.getResponseText());
             }
 
             @Override
             public void onError() {
-
+                listener.setData("error");
             }
         };
-        client.observe(handler);
-        while (true) ;
-    }
-    public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
-
-        System.out.println("Fake Subscribe");
-
-        String newData, oldData=null;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        while(true) {
-            TimeUnit.MILLISECONDS.sleep(5);
-
-            CoapClient client = new CoapClient("coap", host, port, path);
-
-            newData = client.get().getResponseText();
-            if(!newData.equals(oldData)){
-                System.out.println();
-                System.out.println(sdf.format(cal.getTime())+": "+newData);
-                oldData = newData;
-            }
-        }
+        client.observe(req, handler);
+        return listener;
     }
 }
