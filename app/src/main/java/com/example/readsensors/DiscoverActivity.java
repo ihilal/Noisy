@@ -16,12 +16,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.Response;
+
 public class DiscoverActivity extends AppCompatActivity {
 
     SwipeRefreshLayout mySwipeRefreshLayout;
     SharedPreferences prefs;
     String address;
     ListView listview;
+    Topic[] topics;
 
     @Override
     public void onBackPressed() {
@@ -41,12 +46,12 @@ public class DiscoverActivity extends AppCompatActivity {
         address = prefs.getString("address", "");
 
         try {
-            Topic[] topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
+            topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
             String[] stringTopics = new String[topics.length];
 
             if (!topics[0].toString().equals("</ps>;ct=40")) {
                 for (int i = 0; i < topics.length; i++) {
-                    stringTopics[i] = topics[i].toString();
+                    stringTopics[i] = topics[i].getPathString() + "   ;   " + MediaTypeRegistry.toString(topics[i].getCt());
                 }
             } else {
                 stringTopics = new String[0];
@@ -64,7 +69,7 @@ public class DiscoverActivity extends AppCompatActivity {
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                     Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                    n.putExtra("topic-string", l.getItemAtPosition(position).toString());
+                    n.putExtra("topic-string", topics[position].toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
                     startActivity(n);
@@ -104,13 +109,13 @@ public class DiscoverActivity extends AppCompatActivity {
 
 
     public void myUpdateOperation() {
-        Topic[] topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
+        topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
 
         String[] stringTopics = new String[topics.length];
 
         if (!topics[0].toString().equals("</ps>;ct=40")) {
             for (int i = 0; i < topics.length; i++) {
-                stringTopics[i] = topics[i].toString();
+                stringTopics[i] = topics[i].getPathString() + "   ;   " + MediaTypeRegistry.toString(topics[i].getCt());
             }
         } else {
             stringTopics = new String[0];
@@ -127,7 +132,7 @@ public class DiscoverActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                n.putExtra("topic-string", l.getItemAtPosition(position).toString());
+                n.putExtra("topic-string", topics[position].toString());
 //                n.putExtra("position", String.valueOf(position));
 //                n.putExtra("id", String.valueOf(id));
                 startActivity(n);
