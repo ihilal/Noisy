@@ -37,7 +37,7 @@ public class PublishActivity extends AppCompatActivity {
         String address = prefs.getString("address", "");
         CoAP.ResponseCode response = PubSub.publish(address,5683, topic, content);
 
-        Toast toast = Toast.makeText(PublishActivity.this, response.toString() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(PublishActivity.this, response.name() , Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
@@ -46,5 +46,7 @@ public class PublishActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TopicActivity.class);
         intent.putExtra("topic-string", stringTopic);
         startActivity(intent);
+
+        finish();
     }
 }

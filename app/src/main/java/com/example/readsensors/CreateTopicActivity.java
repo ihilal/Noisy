@@ -51,10 +51,12 @@ public class CreateTopicActivity extends AppCompatActivity {
             response = PubSub.create(address, 5683, topic);
         }
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, response.name() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, response.name() , Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
         startActivity(new Intent(CreateTopicActivity.this, DiscoverActivity.class));
+
+        finish();
     }
 }

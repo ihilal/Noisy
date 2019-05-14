@@ -10,12 +10,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 
 public class TopicActivity extends AppCompatActivity {
     TextView tvRead;
     SharedPreferences prefs;
     String content, address;
+    CoapResponse res;
 
     Topic topic = null;
     @Override
@@ -38,7 +40,8 @@ public class TopicActivity extends AppCompatActivity {
             //display content read
             prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
             address = prefs.getString("address", "");
-            content = PubSub.read(address, 5683, topic);
+            res = PubSub.read(address, 5683, topic);
+            content = res.getResponseText();
             tvRead.setText(content);
         }else if(topic.getCt() == 40){
             setContentView(R.layout.activity_topic_ct40);
@@ -51,8 +54,13 @@ public class TopicActivity extends AppCompatActivity {
     public void read(View v) {
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         address = prefs.getString("address", "");
-        content = PubSub.read(address, 5683, topic);
+        res = PubSub.read(address, 5683, topic);
+        content = res.getResponseText();
         tvRead.setText(content);
+
+        Toast toast = Toast.makeText(TopicActivity.this, res.getCode().name() , Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
 
@@ -60,6 +68,7 @@ public class TopicActivity extends AppCompatActivity {
         Intent intent = new Intent(this, PublishActivity.class);
         intent.putExtra("topic-string", topic.toString());
         startActivity(intent);
+        finish();
     }
 
     public void subscribe(View v){
@@ -81,10 +90,11 @@ public class TopicActivity extends AppCompatActivity {
 
         CoAP.ResponseCode response = PubSub.remove(address, 5683, topic);
 
-        Toast toast = Toast.makeText(TopicActivity.this, response.name() , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(TopicActivity.this, response.name() , Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
         startActivity(new Intent(this, DiscoverActivity.class));
+        finish();
     }
 }
