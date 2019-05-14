@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
+    SharedPreferences prefs;
+
     @Override
     public void onBackPressed(){
         Intent a = new Intent(Intent.ACTION_MAIN);
@@ -22,9 +24,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
 
         EditText ipAddress = (EditText) findViewById(R.id.etAddress);
-        ipAddress.setText("130.229.178.80");
+        if (prefs.contains("address"))
+            ipAddress.setText(prefs.getString("address", ""));
     }
 
     public void discover(View v){
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         String address = ipAddress.getText().toString();
 
         //save data
-        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("address", address);
         editor.commit();
