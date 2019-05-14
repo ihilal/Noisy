@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
 
 public class TopicActivity extends AppCompatActivity {
     TextView tvRead;
@@ -35,7 +36,7 @@ public class TopicActivity extends AppCompatActivity {
             setContentView(R.layout.activity_topic_ct0);
             // Capture the layout's TextView and set the string as its text
             TextView tvTopicString = findViewById(R.id.tvTopicString);
-            tvTopicString.setText(stringTopic);
+            tvTopicString.setText(topic.getPathString() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
             tvRead = findViewById(R.id.tvRead);
             //display content read
             prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
@@ -46,7 +47,7 @@ public class TopicActivity extends AppCompatActivity {
         }else if(topic.getCt() == 40){
             setContentView(R.layout.activity_topic_ct40);
             TextView tvTopicString = findViewById(R.id.tvTopicString2);
-            tvTopicString.setText(stringTopic);
+            tvTopicString.setText(topic.getPathString() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
         }
 
     }
