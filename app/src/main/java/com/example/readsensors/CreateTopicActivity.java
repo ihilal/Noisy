@@ -1,21 +1,20 @@
 package com.example.readsensors;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.eclipse.californium.core.coap.CoAP;
+import java.io.IOException;
 
 public class CreateTopicActivity extends AppCompatActivity {
 
-    Topic parent;
+    String path = "ps/";
+
+    PubsubAndroid client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,11 +22,13 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        String strParent;
-        if (intent.hasExtra("topic-string")) {
-            parent = new Topic(intent.getStringExtra("topic-string"));
-        }
+        Bundle bundle = intent.getExtras();
+        client = bundle.getParcelable("pubsub_client");
 
+
+        if (intent.hasExtra("topic-path")) {
+            path = intent.getStringExtra("topic-path");
+        }
 
     }
 
@@ -37,21 +38,17 @@ public class CreateTopicActivity extends AppCompatActivity {
         EditText etCT = (EditText) findViewById(R.id.etCT);
         int ct = Integer.parseInt(etCT.getText().toString());
 
-
-
-        Topic topic = new Topic(name, ct);
-
-        //load data
-        SharedPreferences prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        String address = prefs.getString("address", "");
-        CoAP.ResponseCode response;
-        if (parent != null)
-            response = PubSub.create(address,5683, parent, topic);
-        else {
-            response = PubSub.create(address, 5683, topic);
+        String res = null;
+        try {
+             res = client.create(path,name,ct);
+        } catch (IOException e) {
+            Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         }
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, response.name() , Toast.LENGTH_SHORT);
+
+        Toast toast = Toast.makeText(CreateTopicActivity.this, res , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 

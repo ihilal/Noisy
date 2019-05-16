@@ -1,30 +1,68 @@
 package com.example.readsensors;
 
+import org.eclipse.californium.core.WebLink;
+
 public class Topic {
 
     private String name;
-    private String[] path;
+    private String path;
     private int ct;
 
     /* Takes a URI and extracts the name, path and ct from it */
-    public Topic(String format) {
-        String[] small = format.split(";");
+    public Topic(WebLink link) {
 
 
-        /* Handle content type errors */
-        StringBuilder sb = new StringBuilder();
-        try {
-            this.ct = Integer.parseInt(sb.append(small[1].charAt(small[1].indexOf('=') + 1)).append(small[1].charAt(small[1].indexOf('=') + 2)).toString());
-        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException | NumberFormatException e){
-            sb = new StringBuilder();
-            this.ct = Integer.parseInt(sb.append(small[1].charAt(small[1].indexOf('=') + 1)).toString());
+        String a = link.getURI();
+        this.path = a;
+        String[] b = a.split("/");
+        int s = b.length;
+        this.name = b[s - 1];
+
+        int j = link.toString().indexOf('[');
+
+        if (link.toString().charAt(j + 2) == ']') {
+
+            this.ct = Character.getNumericValue(link.toString().charAt(j + 1));
+
+        } else {
+            try {
+                this.ct = Integer.parseInt(link.toString().substring(j + 1, j + 3));
+            } catch (NumberFormatException | StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
+
+            }
         }
+    }
 
-//        this.ct = Integer.parseInt(small[1].substring(small[1].indexOf('=') + 1));
-        String p = small[0].replace('<', ' ').replace('>', ' ').trim();
-        String pathS = p.substring(p.indexOf('/') + 1);
-        path = pathS.split("/");
-        this.name = path[path.length - 1];
+    @Override
+    public String toString() {
+
+        String res = "Topic Name : " + this.name + "\nTOPIC PATH : " + this.path + "\nCONTENT FORMAT : " + this.ct + "\n";
+
+        return res;
+    }
+
+    public int getCt() {
+        return ct;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setCt(int ct) {
+        this.ct = ct;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public Topic(String name, int ct) {
@@ -33,58 +71,5 @@ public class Topic {
         this.path = null;
     }
 
-    /* Takes name, path and ct and makes them into a universal URI to send easily as just a String*/
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder().append("</").append(getPathString()).append(">;ct=").append(getCt());
-        return sb.toString();
-    }
 
-    /* Takes name and ct and makes them into a URI for the CREATE command*/
-    public String makeCreate() {
-        StringBuilder sb = new StringBuilder().append("<").append(getName()).append(">;ct=").append(getCt());
-        return sb.toString();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String[] getPath() {
-        return path;
-    }
-
-    public void setPath(Topic parent) {
-        String[] array = new String[parent.getPath().length + 1];
-        int i;
-        for (i = 0; i < parent.getPath().length; i++) {
-            array[i] = parent.getPath()[i];
-        }
-        array[i] = this.name;
-        this.path = array;
-    }
-
-    public void setPath() {
-        String[] p = new String[2];
-        p[0] = "ps";
-        p[1] = this.name;
-    }
-
-    public String getPathString() {
-        try {
-            StringBuilder sb = new StringBuilder();
-            for (String p : path) {
-                sb.append('/');
-                sb.append(p);
-            }
-            sb.deleteCharAt(0);
-            return sb.toString();
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-    public int getCt() {
-        return ct;
-    }
 }
