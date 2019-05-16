@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,26 +20,23 @@ import java.util.SimpleTimeZone;
 public class SubscribeActivity extends AppCompatActivity {
 
     ListView listview;
-    SharedPreferences prefs;
-    String address;
     ArrayList<String> dataArray= new ArrayList<String>();
+    PubsubAndroid client;
 
+    PubsubAndroid.Subscription new_sub;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscribe);
 
-
-        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        address = prefs.getString("address", "");
-
         // Get the Intent that started this activity
         Intent intent = getIntent();
         String path = intent.getStringExtra("topic-path");
+        Bundle bundle = intent.getExtras();
+        client = bundle.getParcelable("pubsub_client");
 
         listview = findViewById(R.id.listSubscribe);
 
-        final SubscribeListener data = PubSub.subscribe(address, 5683, path);
 
         final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
                 this,
@@ -47,12 +47,11 @@ public class SubscribeActivity extends AppCompatActivity {
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
 
-        data.setListener(new SubscribeListener.ChangeListener() {
+        SubscribeListener listen = new SubscribeListener() {
             @Override
-            public void onChange() {
+            public void onResponse(String responseText) {
                 String time = sdf.format(Calendar.getInstance().getTime());
-                dataArray.add(time + ":   " + data.getData());
-
+                dataArray.add(time + ":   " +responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -60,8 +59,34 @@ public class SubscribeActivity extends AppCompatActivity {
                         listview.setSelection(displayData.getCount() - 1);
                     }
                 });
+            }
+
+            @Override
+            public void onError() {
+
+
+                Toast toast = Toast.makeText(SubscribeActivity.this, "ERROR", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
 
             }
-        });
+        };
+
+        new_sub = client.new Subscription(path,listen);
+        new_sub.subscribe();
+
     }
+
+    public void unsubscribe(View v){
+
+            new_sub.unsubscribe();
+
+            Toast toast = Toast.makeText(SubscribeActivity.this, "UNSUBSCRIBED SUCCESSFULLY", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+
+            startActivity(new Intent(this, DiscoverActivity.class));
+
+    }
+    
 }

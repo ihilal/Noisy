@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         String address = ipAddress.getText().toString();
 
         //save data
-
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("address", address);
         editor.commit();

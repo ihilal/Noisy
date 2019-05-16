@@ -11,14 +11,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.WebLink;
+
+import java.io.IOException;
+import java.util.Set;
 
 public class DiscoverActivity extends AppCompatActivity {
 
@@ -26,7 +26,9 @@ public class DiscoverActivity extends AppCompatActivity {
     SharedPreferences prefs;
     String address;
     ListView listview;
-    Topic[] topics;
+    Set<WebLink> topics;
+    PubsubAndroid client;
+    String query="";
 
     @Override
     public void onBackPressed() {
@@ -45,33 +47,39 @@ public class DiscoverActivity extends AppCompatActivity {
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         address = prefs.getString("address", "");
 
-        try {
-            topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
-            String[] stringTopics = new String[topics.length];
+        client = new PubsubAndroid(address,5683,5000);
 
-            if (!topics[0].toString().equals("</ps>;ct=40")) {
-                for (int i = 0; i < topics.length; i++) {
-                    stringTopics[i] = topics[i].getPathString() + "   ;   " + MediaTypeRegistry.toString(topics[i].getCt());
-                }
-            } else {
-                stringTopics = new String[0];
+        try {
+
+            String broker = client.discover().toString();
+                Toast toast = Toast.makeText(this, "BROKER IS RUNNING PS\n"+broker, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            topics = client.discover(query);
+            final String[] stringTopics = new String[topics.size()];
+            final String[] stringuri = new String[topics.size()];
+            int i = 0 ;
+
+            for (WebLink x: topics) {
+//                if (!x.toString().equals("</ps>\n\tct: [40]")) {
+                    stringTopics[i] = x.toString();
+                    stringuri[i] = x.getURI().substring(1) + "/";
+                    i++;
+
             }
 
             // Capture the layout's listView and set the string array as its topics
             listview = (ListView) findViewById(R.id.list);
-            ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    stringTopics);
+            ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringTopics);
             listview.setAdapter(displayTopics);
 
             //make list clickable
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                     Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                    n.putExtra("topic-string", topics[position].toString());
-//                n.putExtra("position", String.valueOf(position));
-//                n.putExtra("id", String.valueOf(id));
+                    n.putExtra("topic-string", stringTopics[position]);
+                    n.putExtra("topic-path", stringuri[position]);
+                    n.putExtra("pubsub_client",client);
                     startActivity(n);
                 }
             });
@@ -83,7 +91,6 @@ public class DiscoverActivity extends AppCompatActivity {
                         @Override
                         public void onRefresh() {
                             Log.i("log-tag", "onRefresh called from SwipeRefreshLayout");
-
                             // This method performs the actual data-refresh operation.
                             // The method calls setRefreshing(false) when it's finished.
                             myUpdateOperation();
@@ -91,8 +98,8 @@ public class DiscoverActivity extends AppCompatActivity {
                     }
             );
 
-        } catch (NullPointerException e) {
-            Toast toast = Toast.makeText(this, "WRONG HOST", Toast.LENGTH_SHORT);
+        } catch (NullPointerException | IOException e) {
+            Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
@@ -103,22 +110,35 @@ public class DiscoverActivity extends AppCompatActivity {
 
     public void createMainTopic(View v) {
         Intent intent = new Intent(this, CreateTopicActivity.class);
+        intent.putExtra("pubsub_client",client);
         startActivity(intent);
         finish();
     }
 
+    public void filter(View v){
+        EditText etQuery = (EditText) findViewById(R.id.etQuery);
+        query = etQuery.getText().toString();
+        myUpdateOperation();
+    }
 
     public void myUpdateOperation() {
-        topics = PubSub.discover(address, 5683, 5000, ".well-known/core");
+        try {
+            topics = client.discover(query);
+        } catch (IOException e) {
 
-        String[] stringTopics = new String[topics.length];
+            Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
 
-        if (!topics[0].toString().equals("</ps>;ct=40")) {
-            for (int i = 0; i < topics.length; i++) {
-                stringTopics[i] = topics[i].getPathString() + "   ;   " + MediaTypeRegistry.toString(topics[i].getCt());
-            }
-        } else {
-            stringTopics = new String[0];
+        }
+        final String[] stringTopics = new String[topics.size()];
+        final String[] stringuri = new String[topics.size()];
+        int i = 0 ;
+
+        for (WebLink x: topics) {
+            stringTopics[i] = x.toString();
+            stringuri[i] = x.getURI().substring(1)+"/";
+            i++;
         }
 
         // Capture the layout's listView and set the string array as its topics
@@ -132,9 +152,9 @@ public class DiscoverActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                 Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                n.putExtra("topic-string", topics[position].toString());
-//                n.putExtra("position", String.valueOf(position));
-//                n.putExtra("id", String.valueOf(id));
+                n.putExtra("topic-string", stringTopics[position]);
+                n.putExtra("topic-path", stringuri[position]);
+                n.putExtra("pubsub_client",client);
                 startActivity(n);
             }
         });
