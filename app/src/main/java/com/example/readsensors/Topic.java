@@ -33,6 +33,12 @@ public class Topic {
         }
     }
 
+    public Topic(int ct, String path) {
+        this.path = path;
+        this.ct = ct;
+        this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
+    }
+
     @Override
     public String toString() {
 
