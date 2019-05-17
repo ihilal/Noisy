@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class TopicActivity extends AppCompatActivity {
         client = bundle.getParcelable("pubsub_client");
 
 
+
         topic = new Topic(new WebLink(stringTopic));
 
 
@@ -57,6 +59,25 @@ public class TopicActivity extends AppCompatActivity {
             tvTopicString.setText(topic.getPath() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
         }
 
+        Button btnParent = findViewById(R.id.btnParent);
+        Toast toast = Toast.makeText(TopicActivity.this, path, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        if(path.equals("ps/") || path.split("/").length == 2)
+            btnParent.setVisibility(View.GONE);
+    }
+
+    public void viewParent(View v) {
+        Intent intent = new Intent(getApplicationContext(), TopicActivity.class);
+        String pathWithoutEndSlash = path.substring(0,path.lastIndexOf('/'));
+        String parentPath = pathWithoutEndSlash.substring(0,pathWithoutEndSlash.lastIndexOf('/'));
+
+        WebLink parentTopic = new WebLink(parentPath);
+        parentTopic.getAttributes().setAttribute("ct", "40");
+        intent.putExtra("topic-string", parentTopic.toString());
+        intent.putExtra("topic-path", parentPath);
+        intent.putExtra("pubsub_client",client);
+        startActivity(intent);
     }
 
     public void read(View v) {
