@@ -20,8 +20,9 @@ import java.util.SimpleTimeZone;
 public class SubscribeActivity extends AppCompatActivity {
 
     ListView listview;
-    ArrayList<String> dataArray= new ArrayList<String>();
+//    ArrayList<String> dataArray= new ArrayList<String>();
     PubsubAndroid client;
+    String path;
 
     PubsubAndroid.Subscription new_sub;
     @Override
@@ -31,12 +32,14 @@ public class SubscribeActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-        String path = intent.getStringExtra("topic-path");
+        path = intent.getStringExtra("topic-path");
         Bundle bundle = intent.getExtras();
         client = bundle.getParcelable("pubsub_client");
 
         listview = findViewById(R.id.listSubscribe);
+        ((DataArraySub) SubscribeActivity.this.getApplication()).addDataArray(path);
 
+        ArrayList<String> dataArray = ((DataArraySub) SubscribeActivity.this.getApplication()).getData(path);
 
         final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
                 this,
@@ -51,7 +54,8 @@ public class SubscribeActivity extends AppCompatActivity {
             @Override
             public void onResponse(String responseText) {
                 String time = sdf.format(Calendar.getInstance().getTime());
-                dataArray.add(time + ":   " +responseText);
+                ((DataArraySub) SubscribeActivity.this.getApplication()).setDataArray(responseText,path);
+//                dataArray.add(time + ":   " +responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -80,7 +84,7 @@ public class SubscribeActivity extends AppCompatActivity {
     public void unsubscribe(View v){
 
             new_sub.unsubscribe();
-
+        ((DataArraySub) SubscribeActivity.this.getApplication()).removeDataArray(path);
             Toast toast = Toast.makeText(SubscribeActivity.this, "UNSUBSCRIBED SUCCESSFULLY", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

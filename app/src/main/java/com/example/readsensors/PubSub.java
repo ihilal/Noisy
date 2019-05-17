@@ -95,7 +95,7 @@ public class PubSub {
     public Set<WebLink> discover(String query) throws RuntimeException, IOException {
 
         Request discover = Request.newGet();
-        discover.getOptions().setUriPath(".well-known/core" + query);
+        discover.getOptions().setUriPath(".well-known/core?" + query);
 
         CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
