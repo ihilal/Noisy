@@ -3,6 +3,8 @@ package com.example.readsensors;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -15,13 +17,12 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Observable;
 import java.util.SimpleTimeZone;
 
 public class SubscribeActivity extends AppCompatActivity {
 
     ListView listview;
-//    ArrayList<String> dataArray= new ArrayList<String>();
-    PubsubAndroid client;
     String path;
 
     PubsubAndroid.Subscription new_sub;
@@ -33,13 +34,12 @@ public class SubscribeActivity extends AppCompatActivity {
         // Get the Intent that started this activity
         Intent intent = getIntent();
         path = intent.getStringExtra("topic-path");
-        Bundle bundle = intent.getExtras();
-        client = bundle.getParcelable("pubsub_client");
+
 
         listview = findViewById(R.id.listSubscribe);
-        ((DataArraySub) SubscribeActivity.this.getApplication()).addDataArray(path);
 
-        ArrayList<String> dataArray = ((DataArraySub) SubscribeActivity.this.getApplication()).getData(path);
+
+        ObservableArrayList<String> dataArray = ((DataArraySub) SubscribeActivity.this.getApplication()).getData(path);
 
         final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
                 this,
@@ -47,20 +47,15 @@ public class SubscribeActivity extends AppCompatActivity {
                 dataArray);
         listview.setAdapter(displayData);
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
-
-        SubscribeListener listen = new SubscribeListener() {
+        SubscribeListener ls = new SubscribeListener() {
             @Override
             public void onResponse(String responseText) {
-                String time = sdf.format(Calendar.getInstance().getTime());
-                ((DataArraySub) SubscribeActivity.this.getApplication()).setDataArray(responseText,path);
-//                dataArray.add(time + ":   " +responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         displayData.notifyDataSetChanged();
-                        listview.setSelection(displayData.getCount() - 1);
+                        listview.setSelection(displayData.getCount()-1);
                     }
                 });
             }
@@ -68,28 +63,25 @@ public class SubscribeActivity extends AppCompatActivity {
             @Override
             public void onError() {
 
-
-                Toast toast = Toast.makeText(SubscribeActivity.this, "ERROR", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-
             }
         };
 
-        new_sub = client.new Subscription(path,listen);
-        new_sub.subscribe();
+        ((DataArraySub) SubscribeActivity.this.getApplication()).setListener(ls);
 
     }
 
     public void unsubscribe(View v){
-
+            new_sub=((DataArraySub) SubscribeActivity.this.getApplication()).getPubSub(path);
             new_sub.unsubscribe();
-        ((DataArraySub) SubscribeActivity.this.getApplication()).removeDataArray(path);
+            ((DataArraySub) SubscribeActivity.this.getApplication()).removeDataArray(path);
+
             Toast toast = Toast.makeText(SubscribeActivity.this, "UNSUBSCRIBED SUCCESSFULLY", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
-            startActivity(new Intent(this, DiscoverActivity.class));
+            startActivity(new Intent(this, SubscribedTopics.class));
+
+            finish();
 
     }
     

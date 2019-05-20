@@ -15,11 +15,11 @@ import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class TopicActivity extends AppCompatActivity {
     TextView tvRead;
-    SharedPreferences prefs;
-    String content, address;
 
     String path;
     String stringTopic;
@@ -33,9 +33,9 @@ public class TopicActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity
         Intent intent = getIntent();
-//        if (intent.hasExtra("topic-string")) {
-            stringTopic = intent.getStringExtra("topic-string");
-//        }
+
+        stringTopic = intent.getStringExtra("topic-string");
+
         path = intent.getStringExtra("topic-path");
         Bundle bundle = intent.getExtras();
         client = bundle.getParcelable("pubsub_client");
@@ -44,19 +44,14 @@ public class TopicActivity extends AppCompatActivity {
         topic = new Topic(new WebLink(stringTopic));
 
 
-        if(topic.getCt() == 0){
+        if (topic.getCt() == 0) {
             setContentView(R.layout.activity_topic_ct0);
             // Capture the layout's TextView and set the string as its text
             TextView tvTopicString = findViewById(R.id.tvTopicString);
             tvTopicString.setText(topic.getPath() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
             tvRead = findViewById(R.id.tvRead);
-            //display content read
-//            prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-//            address = prefs.getString("address", "");
-//            res = PubSub.read(address, 5683, topic);
-//            content = res.getResponseText();
-//            tvRead.setText(content);
-        }else if(topic.getCt() == 40){
+
+        } else if (topic.getCt() == 40) {
             setContentView(R.layout.activity_topic_ct40);
             TextView tvTopicString = findViewById(R.id.tvTopicString2);
             tvTopicString.setText(topic.getPath() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
@@ -80,26 +75,57 @@ public class TopicActivity extends AppCompatActivity {
     }
 
 
-    public void publish(View v){
+    public void publish(View v) {
         Intent intent = new Intent(this, PublishActivity.class);
         intent.putExtra("topic-path", path);
-        intent.putExtra("pubsub_client",client);
+        intent.putExtra("pubsub_client", client);
         intent.putExtra("topic-string", stringTopic);
         startActivity(intent);
         finish();
     }
 
-    public void subscribe(View v){
-        Intent intent = new Intent(this, SubscribeActivity.class);
-        intent.putExtra("topic-path", path);
-        intent.putExtra("pubsub_client",client);
-        startActivity(intent);
+    public void subscribe(View v) {
+
+
+        ((DataArraySub) TopicActivity.this.getApplication()).addDataArray(path);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+
+        SubscribeListener listen = new SubscribeListener() {
+            @Override
+            public void onResponse(String responseText) {
+                String time = sdf.format(Calendar.getInstance().getTime());
+                ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + responseText, path);
+            }
+
+            @Override
+            public void onError() {
+
+
+                Toast toast = Toast.makeText(TopicActivity.this, "ERROR", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+
+            }
+        };
+
+        PubsubAndroid.Subscription new_sub = client.new Subscription(path, listen);
+        new_sub.subscribe();
+
+        ((DataArraySub) TopicActivity.this.getApplication()).addPubSub(new_sub);
+
+        Toast toast = Toast.makeText(TopicActivity.this, "SUBSCRIBED", Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+
+
     }
 
-    public void createSubTopic(View v){
+    public void createSubTopic(View v) {
         Intent intent = new Intent(this, CreateTopicActivity.class);
         intent.putExtra("topic-path", path);
-        intent.putExtra("pubsub_client",client);
+        intent.putExtra("pubsub_client", client);
         startActivity(intent);
     }
 
