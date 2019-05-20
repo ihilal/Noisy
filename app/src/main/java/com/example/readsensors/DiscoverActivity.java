@@ -56,9 +56,9 @@ public class DiscoverActivity extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             topics = client.discover(query);
-            Set<WebLink> all_topics = Converter.extractAllWebLinks(topics);
-            final String[] stringTopics = new String[all_topics.size()];
-            final String[] stringuri = new String[all_topics.size()];
+            WebLink[] all_topics = Converter.sort(Converter.extractAllWebLinks(topics));
+            final String[] stringTopics = new String[all_topics.length];
+            final String[] stringuri = new String[all_topics.length];
             int i = 0;
 
 
@@ -141,9 +141,9 @@ public class DiscoverActivity extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             topics = client.discover(query);
-            Set<WebLink> all_topics = Converter.extractAllWebLinks(topics);
-            final String[] stringTopics = new String[all_topics.size()];
-            final String[] stringuri = new String[all_topics.size()];
+            WebLink[] all_topics = Converter.sort(Converter.extractAllWebLinks(topics));
+            final String[] stringTopics = new String[all_topics.length];
+            final String[] stringuri = new String[all_topics.length];
             int i = 0;
 
 
