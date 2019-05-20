@@ -27,7 +27,7 @@ public class Converter {
     }
 
     public static Set<WebLink> extractAllWebLinks(Set<WebLink> webLinks) {
-        Set<WebLink> topics = new ConcurrentSkipListSet();
+        Set<WebLink> topics = new ConcurrentSkipListSet<WebLink>();
         WebLink p;
         for(WebLink w: webLinks) {
             p = w;
@@ -108,7 +108,7 @@ public class Converter {
 
     public static Set<WebLink> getSubTopics(String uri, Set<WebLink> webLinks) {
         uri = cleanUri(uri);
-        Set<WebLink> subtopics = new ConcurrentSkipListSet();
+        Set<WebLink> subtopics = new ConcurrentSkipListSet<WebLink>();
         for (WebLink w: webLinks) {
             if(cleanUri(w.getURI()).contains(uri) && !cleanUri(w.getURI()).equals(uri)) {
                 subtopics.add(w);
