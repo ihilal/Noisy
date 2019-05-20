@@ -61,7 +61,6 @@ public class DiscoverActivity extends AppCompatActivity {
             int i = 0 ;
 
             for (WebLink x: topics) {
-//                if (!x.toString().equals("</ps>\n\tct: [40]")) {
                     stringTopics[i] = x.toString();
                     stringuri[i] = x.getURI().substring(1) + "/";
                     i++;
@@ -119,6 +118,11 @@ public class DiscoverActivity extends AppCompatActivity {
         EditText etQuery = (EditText) findViewById(R.id.etQuery);
         query = etQuery.getText().toString();
         myUpdateOperation();
+    }
+
+    public void subscriptions(View v){
+        Intent intent = new Intent(this, SubscribedTopics.class);
+        startActivity(intent);
     }
 
     public void myUpdateOperation() {

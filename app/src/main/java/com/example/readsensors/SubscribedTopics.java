@@ -14,23 +14,21 @@ public class SubscribedTopics extends AppCompatActivity {
 
     ListView listview;
     ArrayList<String> dataArray= new ArrayList<String>();
-    PubsubAndroid client;
-    String path;
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, DiscoverActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscribed_topics);
 
-// Get the Intent that started this activity
-        Intent intent = getIntent();
-        path = intent.getStringExtra("topic-path");
-        Bundle bundle = intent.getExtras();
-        client = bundle.getParcelable("pubsub_client");
 
         listview = findViewById(R.id.sublist);
 
-        dataArray.add(path);
+        dataArray = ((DataArraySub) SubscribedTopics.this.getApplication()).getPaths();
 
         final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
                 this,
@@ -42,8 +40,7 @@ public class SubscribedTopics extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                 Intent n = new Intent(getApplicationContext(), SubscribeActivity.class);
-                n.putExtra("topic-path", path);
-                n.putExtra("pubsub_client",client);
+                n.putExtra("topic-path", dataArray.get(position));
                 startActivity(n);
             }
         });
