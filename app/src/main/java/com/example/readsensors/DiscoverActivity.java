@@ -55,7 +55,7 @@ public class DiscoverActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "BROKER IS RUNNING PS\n" + broker, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            topics = Converter.getWebLinks(client.discover(query));
+            topics = Converter.getAllWebLinks(client.discover(query));
             final String[] stringTopics = new String[topics.size()];
             final String[] stringuri = new String[topics.size()];
             int i = 0;
@@ -68,38 +68,39 @@ public class DiscoverActivity extends AppCompatActivity {
                     i++;
                 }
             }
+            if(stringTopics.length>0) {
+                if (stringTopics[0] != null) {
 
-            if (stringTopics[0] != null) {
+                    // Capture the layout's listView and set the string array as its topics
+                    listview = (ListView) findViewById(R.id.list);
+                    ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringTopics);
+                    listview.setAdapter(displayTopics);
 
-                // Capture the layout's listView and set the string array as its topics
-                listview = (ListView) findViewById(R.id.list);
-                ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringTopics);
-                listview.setAdapter(displayTopics);
-
-                //make list clickable
-                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                        Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                        n.putExtra("topic-string", stringTopics[position]);
-                        n.putExtra("topic-path", stringuri[position]);
-                        n.putExtra("pubsub_client", client);
-                        startActivity(n);
-                    }
-                });
-
-                mySwipeRefreshLayout = findViewById(R.id.swiperefresh);
-
-                mySwipeRefreshLayout.setOnRefreshListener(
-                        new SwipeRefreshLayout.OnRefreshListener() {
-                            @Override
-                            public void onRefresh() {
-                                Log.i("log-tag", "onRefresh called from SwipeRefreshLayout");
-                                // This method performs the actual data-refresh operation.
-                                // The method calls setRefreshing(false) when it's finished.
-                                myUpdateOperation();
-                            }
+                    //make list clickable
+                    listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                            Intent n = new Intent(getApplicationContext(), TopicActivity.class);
+                            n.putExtra("topic-string", stringTopics[position]);
+                            n.putExtra("topic-path", stringuri[position]);
+                            n.putExtra("pubsub_client", client);
+                            startActivity(n);
                         }
-                );
+                    });
+
+                    mySwipeRefreshLayout = findViewById(R.id.swiperefresh);
+
+                    mySwipeRefreshLayout.setOnRefreshListener(
+                            new SwipeRefreshLayout.OnRefreshListener() {
+                                @Override
+                                public void onRefresh() {
+                                    Log.i("log-tag", "onRefresh called from SwipeRefreshLayout");
+                                    // This method performs the actual data-refresh operation.
+                                    // The method calls setRefreshing(false) when it's finished.
+                                    myUpdateOperation();
+                                }
+                            }
+                    );
+                }
             }
 
             } catch(RuntimeException e){

@@ -44,7 +44,7 @@ public class Converter {
     /*helper functions for WebLink*/
 
     public static WebLink makeWebLink(String uri, int ct) {
-        WebLink webLink = new WebLink(uri);
+        WebLink webLink = new WebLink('/'+cleanUri(uri));
         setCT(webLink, ct);
         return webLink;
     }
