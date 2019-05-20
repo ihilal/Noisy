@@ -9,6 +9,7 @@ public class PubsubAndroid extends  PubSub implements Parcelable {
     public PubsubAndroid(String host, int port, long timeout) {
         super(host, port, timeout);
     }
+    public PubsubAndroid(String host) {super(host);}
 
 
 

@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.IOException;
 
 public class CreateTopicActivity extends AppCompatActivity {
 

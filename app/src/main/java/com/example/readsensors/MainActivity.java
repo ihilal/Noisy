@@ -26,20 +26,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
 
-        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
+        EditText ipAddress = findViewById(R.id.etAddress);
         if (prefs.contains("address"))
             ipAddress.setText(prefs.getString("address", ""));
     }
 
     public void discover(View v){
         Intent intent = new Intent(this, DiscoverActivity.class);
-        EditText ipAddress = (EditText) findViewById(R.id.etAddress);
+        EditText ipAddress = findViewById(R.id.etAddress);
         String address = ipAddress.getText().toString();
-
-        //save data
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("address", address);
-        editor.commit();
+        intent.putExtra("address", address);
+        prefs.edit().putString("address", address).apply();
 
         startActivity(intent);
     }
