@@ -55,7 +55,7 @@ public class DiscoverActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "BROKER IS RUNNING PS\n" + broker, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            topics = client.discover(query);
+            topics = Converter.getWebLinks(client.discover(query));
             final String[] stringTopics = new String[topics.size()];
             final String[] stringuri = new String[topics.size()];
             int i = 0;
@@ -102,7 +102,7 @@ public class DiscoverActivity extends AppCompatActivity {
                 );
             }
 
-            } catch(NullPointerException | IOException e){
+            } catch(RuntimeException e){
                 Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -133,8 +133,8 @@ public class DiscoverActivity extends AppCompatActivity {
 
     public void myUpdateOperation() {
         try {
-            topics = client.discover(query);
-        } catch (IOException e) {
+            topics = Converter.getWebLinks(client.discover(query));
+        } catch (RuntimeException e) {
 
             Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);

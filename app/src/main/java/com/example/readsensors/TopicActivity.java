@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 
@@ -84,8 +86,8 @@ public class TopicActivity extends AppCompatActivity {
 
         String read_res = null;
         try {
-            read_res = client.read(path);
-        } catch (IOException e) {
+            read_res = client.read(path).getResponseText();
+        } catch (RuntimeException e) {
 
             Toast toast = Toast.makeText(TopicActivity.this, "WRONG PATH OR TIMEOUT ", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -113,11 +115,11 @@ public class TopicActivity extends AppCompatActivity {
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
 
-        SubscribeListener listen = new SubscribeListener() {
+        CoapHandler listen = new CoapHandler() {
             @Override
-            public void onResponse(String responseText) {
+            public void onLoad(CoapResponse response) {
                 String time = sdf.format(Calendar.getInstance().getTime());
-                ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + responseText, path);
+                ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + response.getResponseText(), path);
             }
 
             @Override
@@ -131,7 +133,7 @@ public class TopicActivity extends AppCompatActivity {
             }
         };
 
-        PubsubAndroid.Subscription new_sub = client.new Subscription(path, listen);
+        PubsubAndroid.Subscription new_sub = client.new Subscription(listen, path);
         new_sub.subscribe();
 
         ((DataArraySub) TopicActivity.this.getApplication()).addPubSub(new_sub);
@@ -154,8 +156,8 @@ public class TopicActivity extends AppCompatActivity {
 
         String remove_res = null;
         try {
-            remove_res = client.remove(path);
-        } catch (IOException e) {
+            remove_res = client.remove(path).getResponseText();
+        } catch (RuntimeException e) {
             Toast toast = Toast.makeText(TopicActivity.this, "WRONG PATH OR TIMEOUT ", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

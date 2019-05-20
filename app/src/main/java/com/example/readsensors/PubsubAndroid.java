@@ -14,12 +14,7 @@ public class PubsubAndroid extends  PubSub implements Parcelable {
 
 
     public PubsubAndroid(Parcel in) {
-
-        super();
-        super.setHost(in.readString());
-        super.setPort(in.readInt());
-        super.setTimeout(in.readLong());
-
+        super(in.readString(), in.readInt(), in.readLong());
     }
 
 

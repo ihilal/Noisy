@@ -41,8 +41,8 @@ public class PublishActivity extends AppCompatActivity {
 
         String res = null;
         try {
-            res = client.publish(path, content, topic.getCt());
-        } catch (IOException e) {
+            res = client.publish(content, topic.getCt(), path).getResponseText();
+        } catch (RuntimeException e) {
             Toast toast = Toast.makeText(PublishActivity.this, res, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

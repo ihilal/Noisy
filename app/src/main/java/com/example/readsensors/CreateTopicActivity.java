@@ -40,8 +40,8 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         String res = null;
         try {
-             res = client.create(path,name,ct);
-        } catch (IOException e) {
+             res = client.create(name,ct, path).getResponseText();
+        } catch (RuntimeException e) {
             Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
