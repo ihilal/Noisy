@@ -48,7 +48,7 @@ public class CreateTopicActivity extends AppCompatActivity {
         }
 
 
-        Toast toast = Toast.makeText(CreateTopicActivity.this, res , Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateTopicActivity.this, path , Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
