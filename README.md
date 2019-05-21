@@ -15,6 +15,8 @@ You can see the repository for the CoAP library here: https://github.com/wajd/Te
 
 ## Available functionality:
 - Discover
+    - Query the broker
+    - Filter topics by name
 - Read
 - Create
 - Publish
@@ -23,6 +25,7 @@ You can see the repository for the CoAP library here: https://github.com/wajd/Te
 - Remove
 
 ## Installation:
+Clone the project and open it in Android studio. Then use Android Studio to download it on your device.
 
 ## Support: 
 Open an issue here on GitHub
