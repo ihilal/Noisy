@@ -25,7 +25,7 @@ You can see the repository for the CoAP library here: https://github.com/wajd/Te
 - Remove
 
 ## Installation:
-Clone the project and open it in Android studio. Then use Android Studio to download it on your device.
+Clone the project and open it in Android studio. Then use Android Studio to download it on your device. APK will be uploaded as soon as available.
 
 ## Support: 
 Open an issue here on GitHub
