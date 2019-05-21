@@ -14,6 +14,7 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences prefs;
+    int port = 5683;
 
     @Override
     public void onBackPressed(){
@@ -51,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("port-num"))
+            port = intent.getIntExtra("port-num", 5683);
+
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
 
         EditText ipAddress = (EditText) findViewById(R.id.etAddress);
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void discover(View v){
         Intent intent = new Intent(this, DiscoverActivity.class);
+        intent.putExtra("port-num", port);
+
         EditText ipAddress = (EditText) findViewById(R.id.etAddress);
         String address = ipAddress.getText().toString();
 

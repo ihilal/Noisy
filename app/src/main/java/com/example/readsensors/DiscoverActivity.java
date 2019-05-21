@@ -37,6 +37,7 @@ public class DiscoverActivity extends AppCompatActivity {
     ArrayList<String> crTopics ;
     ArrayList<String> cruri;
     ArrayList<Integer> crct;
+    int port = 5683;
 
     @Override
     public void onBackPressed() {
@@ -48,11 +49,20 @@ public class DiscoverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover);
 
+
+
+
         //load data
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         address = prefs.getString("address", "");
 
         client = new PubsubAndroid(address);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("port-num")) {
+            port = intent.getIntExtra("port-num", 5683);
+            client.setPort(port);
+        }
 
 
         try {
@@ -141,7 +151,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     public void find(View v){
-        EditText etQuery = (EditText) findViewById(R.id.etQuery);
+        final EditText etQuery = (EditText) findViewById(R.id.etQuery);
         String key = etQuery.getText().toString();
         final ArrayList<String> resultTopic = new ArrayList<>();
         final ArrayList<String> resultUri = new ArrayList<>();
@@ -170,6 +180,7 @@ public class DiscoverActivity extends AppCompatActivity {
                 n.putExtra("topic-path", resultUri.get(position));
                 n.putExtra("topic-ct", resultct.get(position));
                 n.putExtra("pubsub_client", client);
+                etQuery.setText("");
                 startActivity(n);
             }
         });
