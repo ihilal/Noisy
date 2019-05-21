@@ -6,8 +6,9 @@ import android.os.Parcelable;
 public class PubsubAndroid extends  PubSub implements Parcelable {
 
 
-    public PubsubAndroid(String host, int port, long timeout) {
-        super(host, port, timeout);
+    public PubsubAndroid(String host) {
+
+        super(host);
     }
 
 
@@ -15,10 +16,7 @@ public class PubsubAndroid extends  PubSub implements Parcelable {
 
     public PubsubAndroid(Parcel in) {
 
-        super();
-        super.setHost(in.readString());
-        super.setPort(in.readInt());
-        super.setTimeout(in.readLong());
+        super(in.readString());
 
     }
 
@@ -34,8 +32,6 @@ public class PubsubAndroid extends  PubSub implements Parcelable {
 
 
         dest.writeString(super.getHost());
-        dest.writeInt(super.getPort());
-        dest.writeLong(super.getTimeout());
 
     }
 

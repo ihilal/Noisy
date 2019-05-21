@@ -25,6 +25,11 @@ public class SubscribeActivity extends AppCompatActivity {
     ListView listview;
     String path;
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, SubscribedTopics.class));
+    }
+
     PubsubAndroid.Subscription new_sub;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,6 @@ public class SubscribeActivity extends AppCompatActivity {
             startActivity(new Intent(this, SubscribedTopics.class));
 
             finish();
-
     }
     
 }

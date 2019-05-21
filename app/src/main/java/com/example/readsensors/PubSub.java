@@ -1,312 +1,309 @@
 package com.example.readsensors;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import org.eclipse.californium.core.*;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import java.io.IOException;
-import java.util.Set;
 
 
+/**
+ * A PubsSub instance can be used to establish a Publish Subscribe client
+ * according to the IETF Publish-Subscribe Model for the Constrained Application
+ * Protocol (CoAP) RFC draft
+ *
+ * it allows you to connect to a broker that supports the model so that you:
+ * Discover available topics,
+ * Create new topics,
+ * Publish to available topics,
+ * Read from available topics
+ * Remove topics,
+ * Subscribe to available topics
+ *
+ * TODO: add support for querying within specific topics
+ */
 public class PubSub {
 
+    private static final String SCHEME = "coap";
     private String host;
-    private  int port  = 5683;
-    private static final String scheme = "coap";
+    private int port;
     private long timeout;
     private NetworkConfig config = NetworkConfig.createStandardWithoutFile();
 
+    /**
+     * Creates an instance of PubSub with the port set to 5683 (CoAP default port) and timeout 5000 milliseconds
+     * @param host ip address of the broker
+     */
+    public PubSub(String host) {
+        this.host = host;
+        this.port = 5683;
+        this.timeout = 5000;
+    }
 
-
-
-    public PubSub(String host , int port , long timeout ){
-        this.host = host ;
-        this.port = port ;
+    /**
+     * Creates an instance of PubSub with specified parameters
+     * @param host ip address of the broker as a String
+     * @param port number of the broker
+     * @param timeout time the client waits for response (timeout = 0 -> waits indefinitely)
+     */
+    public PubSub(String host, int port, long timeout) {
+        this.host = host;
+        this.port = port;
         this.timeout = timeout;
     }
 
-    public PubSub() {
-    }
-
+    /**
+     * @return an empty network configuration of the PubSub instance
+     * which can be changed and then set with the setter function
+     */
     public NetworkConfig getConfig() {
         return config;
     }
 
+    /**
+     * Sets the network configuration of the PubSub instance
+     * @param config
+     */
     public void setConfig(NetworkConfig config) {
         this.config = config;
     }
 
+    /**
+     * @return port number
+     */
     public int getPort() {
         return this.port;
     }
 
-    public String getHost() {
-        return this.host;
-    }
-
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
+    /**
+     * Sets port number
+     * @param port number of the broker
+     */
     public void setPort(int port) {
         this.port = port;
     }
 
+    /**
+     * @return host ip as a String
+     */
+    public String getHost() {
+        return this.host;
+    }
+
+    /**
+     * Sets the host of the PubSub instance
+     * @param host ip address of the broker as a String
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    /**
+     * @return timeout - time the client waits for response
+     */
     public long getTimeout() {
         return timeout;
     }
 
+    /**
+     * Sets the timeout of the PubSub instance
+     * Setting this property to 0 will result in methods waiting infinitely
+     * @param timeout time the client waits for response
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-    /* Returns array of Topic objects and Confirmation Code*/
 
-    public Set<WebLink> discover() throws  IOException {
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
-        client.setTimeout(this.timeout);
-
-        Set<WebLink> x = null;
-        try {
-
-            x = client.discover("?rt=core.ps");
-        } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-        }
-
-        if (x == null) {
-            throw new IOException(" NO RESPONSE , TIMEOUT ");
-        } else if (x.size() == 0) {
-
-            System.out.println(" THE CONTENT FORMAT IS NOT 40 = APPLICATION LINK FORMAT");
-            return x;
-        }
-
-        return x;
+    /**
+     * Sends a synchronous GET request to the broker without a query
+     * @return CoapResponse which contains all the topics from the broker
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse discover() throws  RuntimeException {
+        return discover("");
     }
 
-    public Set<WebLink> discover(String query) throws RuntimeException, IOException {
-
+    /**
+     * Sends a synchronous GET request to the broker with a specified
+     * To discover whether the broker supports CoAP PubSub protocol "rt=core.ps" query can be sent
+     * @param query String e.g. ct=40
+     * @return CoapResponse which contains the topics with the attributes specified by the query
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse discover(String query) throws RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
 
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
 
-        CoapResponse response = null;
-        try {
-            response = client.advanced(discover);
-        } catch (RuntimeException e) {
+        CoapResponse response = client.advanced(discover);
 
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-        }
-
-
-        if (response == null) {
-
-            throw  new IOException(" NO RESPONSE , TIMEOUT");
-
-        }
-        return LinkFormat.parse(response.getResponseText());
-
+        return response;
     }
 
-    /* Returns topic and Confirmation Code */
-    public String create(String path , String name , int ct) throws  IOException {
+    /**
+     * Sends a synchronous POST request to the broker which creates a topic at the broker
+     * The topic has to be specified by name, ct and topicPath uri
+     * @param name String is the name of the topic
+     * @param ct int is the content type of the topic (ct=40 for parent folder, ct=0 for plain text)
+     * @param uri String or String[] is the topicPath where the topic should be created (e.g. ps/t1/t2 or {[ps],[t1],[t2]})
+     * @return CoapResponse which contains the broker's response to our request i.e. response code,...
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse create(String name, int ct, String... uri) throws RuntimeException {
 
-
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
-
 
         StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
         String payload = sb.toString();
-
 
         Request req = Request.newPost();
         req.setPayload(payload);
         req.getOptions().setContentFormat(ct);
 
-        CoapResponse res = null;
-        try {
-            res = client.advanced(req);
-        } catch (RuntimeException e) {
+        CoapResponse res = client.advanced(req);
 
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-        }
-
-
-        if (res == null) {
-
-            throw new IOException("INVALID PATH ");
-
-        }
-
-        return res.getResponseText() + "\n" + res.getOptions().toString();
-
-
+        return res;
     }
 
-    /* Returns Confirmation Code */
-    public String publish( String path, String payload , int ct ) throws  IOException {
-
-
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+    /**
+     * Sends a synchronous PUT request to the broker which publishes data to a topic
+     * The topic is specified by topicPath uri and ct
+     * ct of the topic and the request has to match for data to be published
+     * @param payload String is data to be published
+     * @param ct int is the content type of the data (has to match ct of the topic)
+     * @param uri String or String[] is the topicPath of the topic to which data should be published
+     * @return CoapResponse which contains the broker's response to our request i.e. response code,...
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse publish(String payload, int ct, String... uri) throws RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
 
-        CoapResponse res = null;
-        try {
-            res = client.put(payload,ct);
+        CoapResponse res = client.put(payload, ct);
 
-        } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
-        }
-
-
-        if (res == null) {
-
-            throw new IOException(" INVALID PATH ");
-
-        }
-
-        return res.getCode().toString() + " " + res.getCode().name();
-
+        return res;
     }
 
-    /* Returns Content and Confirmation Code */
-    public String read(String path) throws  IOException {
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+    /**
+     * Sends a synchronous GET request to the broker which retrieves data from the topic
+     * @param uri String or String[] is the topicPath of the topic from which the data should be read
+     * @return CoapResponse which contains the broker's response to our request i.e. content, response code...
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse read(String... uri) throws RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
 
+        CoapResponse res = client.get();
 
-        CoapResponse x = null;
-        try {
-            x = client.get();
-
-        } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
-
-        }
-
-        if (x == null) {
-
-            throw new IOException(" PATH IS NOT VALID");
-        }
-
-
-        return x.getResponseText();
-
+        return res;
     }
 
-    /* Returns Confirmation Code */
-    public String remove(String path) throws  IOException {
+    /**
+     * Sends a synchronous DELETE request to the broker which removes the specified topic from the broker
+     * If the topic is a parent topic, the broker removes all of its children
+     * @param uri String or String[] is the topicPath of the topic which should be removed
+     * @throws RuntimeException when the request times out
+     */
+    public CoapResponse remove(String... uri) throws RuntimeException {
 
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
+        CoapResponse res = client.delete();
 
-        CoapResponse response = null;
-        try {
-            response = client.delete();
-
-        } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
-        }
-
-
-        if (response == null) {
-            throw new IOException();
-        }
-
-        return response.getCode().toString() + " " + response.getCode().name();
+        return res;
     }
 
 
-    public Topic[] get_Topics(Set<WebLink> links){
-
-        int num = links.size();
-
-        Topic [] result = new Topic[num];
-
-
-        int i = 0;
-
-        for (WebLink x:links) {
-
-            result[i] = new Topic(x);
-            i++;
-
-        }
-        return  result;
-    }
-
-
-
+    /**
+     * The Subscription class can be used to asynchronously subscribe to a given topic uri
+     * It can be reused for the same uri while also giving it a new {@link CoapHandler} to handle the
+     * asynchronous CoapResponse returned from the broker
+     *
+     * The uri cannot be changed once set, but the CoapHanlder can be.
+     */
     public class Subscription {
+        /** the client */
         private CoapClient client;
+        /** the observe relation */
         private CoapObserveRelation relation;
-        private String path;
-        private SubscribeListener listener;
+        /** the uri of subscribed topic */
+        private String[] uri;
+        /** the listener for returned CoapResponse */
+        private CoapHandler handler;
 
-        public Subscription(String path, SubscribeListener listener) {
-            this.path = path;
-            this.listener = listener;
+        /**
+         * Constructs a A Subscription instance that allows subscription to a given
+         * topic uri string and takes a a CoapHandler to handle the returned response
+         *
+         * A Constructed Susbcription instance does not automatically subscribe
+         * you must call #subscribe().
+         *
+         * @param handler CoapHandler
+         * @param uri String or String[]
+         */
+        public Subscription(CoapHandler handler, String... uri) {
+            this.uri = uri;
+            this.handler = handler;
             this.relation = null;
             this.client = null;
         }
 
-        public void subscribe() {
+        /**
+         * Gets the current handler assigned to Subscription instance
+         *
+         * @return a CoapHandler
+         */
+        public CoapHandler getHandler() {
+            return handler;
+        }
+
+        /**
+         * Sets a new CoapHandler for the Subscription instance
+         *
+         * @param handler CoapHandler
+         */
+        public void setHandler(CoapHandler handler) {
+            this.handler = handler;
+        }
+
+        /**
+         * subscribes to the uri of the Subscription instance and runs
+         * the CoapHandler #onLoad when it gets a CoapResponse
+         *
+         * @throws RuntimeException when the request times out
+         */
+        public void subscribe() throws RuntimeException {
 
             Request req = new Request(CoAP.Code.GET);
 
-            client = new CoapClient(scheme, getHost(), getPort(), path);
+            client = new CoapClient(SCHEME, getHost(), getPort(), uri);
             client.useExecutor();
             client.setTimeout(timeout);
 
             req.setURI(client.getURI());
             req.setObserve();
 
-            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT,4);
+            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT, 4);
             RandomTokenGenerator rand = new RandomTokenGenerator(config);
             Token token = rand.createToken(false);
             req.setToken(token);
 
-            CoapHandler handler = new CoapHandler() {
-                @Override
-                public void onLoad(CoapResponse coapResponse) {
-                    listener.onResponse(coapResponse.getResponseText());
-                }
-
-                @Override
-                public void onError() {
-                    listener.onError();
-                }
-            };
-
-
-            try{
-                relation = client.observe(req ,handler);
-            }
-            catch (RuntimeException e ){
-
-                System.err.println(" THERE IS NO CoAP BROKER FOUND");
-            }
-
-            return;
+            relation = client.observe(req, handler);
         }
 
+        /**
+         * Unsubscribes from the uri of the Subscription instance
+         * and shuts down the client
+         */
         public void unsubscribe() {
             if (this.relation != null) {
                 relation.proactiveCancel();
@@ -317,5 +314,4 @@ public class PubSub {
                 client.shutdown();
         }
     }
-
 }

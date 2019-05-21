@@ -15,7 +15,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:background="@android:color/holo_blue_dark"
+        android:background="@drawable/mybutton"
         android:onClick="publish"
         android:text="PUBLISH"
         app:layout_constraintEnd_toEndOf="parent"
