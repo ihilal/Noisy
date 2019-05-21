@@ -1,19 +1,16 @@
 package com.example.readsensors;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.eclipse.californium.core.WebLink;
-import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -22,10 +19,11 @@ import java.util.Calendar;
 public class TopicActivity extends AppCompatActivity {
     TextView tvRead;
 
-    String path;
-    String stringTopic;
-    Topic topic = null;
+    String topicPath;
+    String topicName;
+    int topicCt;
     PubsubAndroid client;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -35,46 +33,30 @@ public class TopicActivity extends AppCompatActivity {
         // Get the Intent that started this activity
         Intent intent = getIntent();
 
-        stringTopic = intent.getStringExtra("topic-string");
-
-        path = intent.getStringExtra("topic-path");
+        topicName = intent.getStringExtra("topic-string");
+        topicPath = intent.getStringExtra("topic-path");
+        topicCt =  intent.getIntExtra("topic-ct",0);
         Bundle bundle = intent.getExtras();
+        assert bundle != null;
         client = bundle.getParcelable("pubsub_client");
 
-
-
-        topic = new Topic(new WebLink(stringTopic));
-
-
-        if (topic.getCt() == 0) {
             setContentView(R.layout.activity_topic_ct0);
             // Capture the layout's TextView and set the string as its text
             TextView tvTopicString = findViewById(R.id.tvTopicString);
-            tvTopicString.setText(topic.getPath() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
+            tvTopicString.setText(topicName + "\n"+ topicPath +"\n"+Converter.getCTString(topicCt));
             tvRead = findViewById(R.id.tvRead);
 
-        } else if (topic.getCt() == 40) {
-            setContentView(R.layout.activity_topic_ct40);
-            TextView tvTopicString = findViewById(R.id.tvTopicString2);
-            tvTopicString.setText(topic.getPath() + "   ;   " + MediaTypeRegistry.toString(topic.getCt()));
-        }
 
-        Toast toast = Toast.makeText(TopicActivity.this, path, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(TopicActivity.this, topicPath, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 
     public void read(View v) {
+        TextView tv = findViewById(R.id.data);
+        tv.setText("Data:");
 
-        String read_res = null;
-        try {
-            read_res = client.read(path);
-        } catch (IOException e) {
-
-            Toast toast = Toast.makeText(TopicActivity.this, "WRONG PATH OR TIMEOUT ", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        }
+        String read_res = client.read(topicPath).getResponseText();
 
         tvRead.setText(read_res);
     }
@@ -82,40 +64,42 @@ public class TopicActivity extends AppCompatActivity {
 
     public void publish(View v) {
         Intent intent = new Intent(this, PublishActivity.class);
-        intent.putExtra("topic-path", path);
+        intent.putExtra("topic-path", topicPath);
         intent.putExtra("pubsub_client", client);
-        intent.putExtra("topic-string", stringTopic);
+        intent.putExtra("topic-string", topicName);
+        intent.putExtra("topic-ct", topicCt);
         startActivity(intent);
         finish();
     }
 
     public void subscribe(View v) {
 
+        Intent intent = new Intent(this, SubscribeActivity.class);
+        intent.putExtra("topic-path", topicPath);
 
-        ((DataArraySub) TopicActivity.this.getApplication()).addDataArray(path);
+        ((DataArraySub) TopicActivity.this.getApplication()).addDataArray(topicPath);
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
+       CoapHandler listen = new CoapHandler() {
+           @Override
+           public void onLoad(CoapResponse response) {
 
-        SubscribeListener listen = new SubscribeListener() {
-            @Override
-            public void onResponse(String responseText) {
-                String time = sdf.format(Calendar.getInstance().getTime());
-                ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + responseText, path);
-            }
+               String time = sdf.format(Calendar.getInstance().getTime());
+               ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + response.getResponseText(), topicPath);
+           }
 
-            @Override
-            public void onError() {
+           @Override
+           public void onError() {
 
+            Toast toast = Toast.makeText(TopicActivity.this, "ERROR", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
 
-                Toast toast = Toast.makeText(TopicActivity.this, "ERROR", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+           }
+       };
 
-            }
-        };
-
-        PubsubAndroid.Subscription new_sub = client.new Subscription(path, listen);
+        PubsubAndroid.Subscription new_sub = client.new Subscription(listen,topicPath);
         new_sub.subscribe();
 
         ((DataArraySub) TopicActivity.this.getApplication()).addPubSub(new_sub);
@@ -124,27 +108,13 @@ public class TopicActivity extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-
-    }
-
-    public void createSubTopic(View v) {
-        Intent intent = new Intent(this, CreateTopicActivity.class);
-        intent.putExtra("topic-path", path);
-        intent.putExtra("pubsub_client", client);
         startActivity(intent);
     }
 
+
     public void remove(View v) {
-
         String remove_res = null;
-        try {
-            remove_res = client.remove(path);
-        } catch (IOException e) {
-            Toast toast = Toast.makeText(TopicActivity.this, "WRONG PATH OR TIMEOUT ", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-
-        }
+        remove_res = client.remove(topicPath).getResponseText();
 
         Toast toast = Toast.makeText(TopicActivity.this, remove_res, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);

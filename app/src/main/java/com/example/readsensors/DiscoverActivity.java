@@ -18,6 +18,8 @@ import android.widget.Toast;
 import org.eclipse.californium.core.WebLink;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 public class DiscoverActivity extends AppCompatActivity {
@@ -29,6 +31,13 @@ public class DiscoverActivity extends AppCompatActivity {
     Set<WebLink> topics;
     PubsubAndroid client;
     String query = "";
+    ArrayList<String> pubTopics ;
+    ArrayList<String> puburi;
+    ArrayList<Integer> pubct;
+    ArrayList<String> crTopics ;
+    ArrayList<String> cruri;
+    ArrayList<Integer> crct;
+    int port = 5683;
 
     @Override
     public void onBackPressed() {
@@ -40,49 +49,62 @@ public class DiscoverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover);
 
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
+
+
 
         //load data
         prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
         address = prefs.getString("address", "");
 
-        client = new PubsubAndroid(address, 5683, 5000);
+        client = new PubsubAndroid(address);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("port-num")) {
+            port = intent.getIntExtra("port-num", 5683);
+            client.setPort(port);
+        }
+
 
         try {
+            pubTopics = new ArrayList<>();
+            puburi = new ArrayList<>();
+            pubct = new ArrayList<>();
+            crTopics = new ArrayList<>();
+            cruri = new ArrayList<>();
+            crct = new ArrayList<>();
 
-            String broker = client.discover().toString();
+            String broker = client.discover("rt=ps.core").getResponseText();
             Toast toast = Toast.makeText(this, "BROKER IS RUNNING PS\n" + broker, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            topics = client.discover(query);
-            WebLink[] all_topics = Converter.sort(Converter.extractAllWebLinks(topics));
-            final String[] stringTopics = new String[all_topics.length];
-            final String[] stringuri = new String[all_topics.length];
-            int i = 0;
 
+            topics = Converter.getAllWebLinks(client.discover(query));
 
-            for (WebLink x : all_topics) {
-                if (!x.toString().equals("</ps>\n\tct:\t[40]")) {
-                    stringTopics[i] = x.toString();
-                    stringuri[i] = x.getURI().substring(1) + "/";
-                    i++;
+            for (WebLink x : topics) {
+                if(Converter.getCT(x) == 40){
+                    crTopics.add(Converter.getName(x));
+                    cruri.add(Converter.getUri(x));
+                    crct.add(Converter.getCT(x));
+                } else{
+                    pubTopics.add(Converter.getName(x));
+                    puburi.add(Converter.getUri(x));
+                    pubct.add(Converter.getCT(x));
                 }
+
             }
-            if (stringTopics.length > 0) {
-                if (stringTopics[0] != null) {
 
                     // Capture the layout's listView and set the string array as its topics
                     listview = (ListView) findViewById(R.id.list);
-                    ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringTopics);
+                    ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,pubTopics);
                     listview.setAdapter(displayTopics);
 
                     //make list clickable
                     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                             Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                            n.putExtra("topic-string", stringTopics[position]);
-                            n.putExtra("topic-path", stringuri[position]);
+                            n.putExtra("topic-string", pubTopics.get(position));
+                            n.putExtra("topic-path", puburi.get(position));
+                            n.putExtra("topic-ct", pubct.get(position));
                             n.putExtra("pubsub_client", client);
                             startActivity(n);
                         }
@@ -101,10 +123,7 @@ public class DiscoverActivity extends AppCompatActivity {
                                 }
                             }
                     );
-                }
-            }
-
-        } catch (NullPointerException | IOException e) {
+        } catch (NullPointerException e) {
             Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -112,20 +131,61 @@ public class DiscoverActivity extends AppCompatActivity {
             onBackPressed();
         }
 
-
     }
 
     public void createMainTopic(View v) {
         Intent intent = new Intent(this, CreateTopicActivity.class);
+        intent.putExtra("topic-string", crTopics);
+        intent.putExtra("topic-path", cruri);
+        intent.putExtra("topic-ct", crct);
         intent.putExtra("pubsub_client", client);
+
         startActivity(intent);
         finish();
     }
 
     public void filter(View v) {
         EditText etQuery = (EditText) findViewById(R.id.etQuery);
-        query = etQuery.getText().toString();
+        query = etQuery.getText().toString().toLowerCase();
         myUpdateOperation();
+    }
+
+    public void find(View v){
+        final EditText etQuery = (EditText) findViewById(R.id.etQuery);
+        String key = etQuery.getText().toString();
+        final ArrayList<String> resultTopic = new ArrayList<>();
+        final ArrayList<String> resultUri = new ArrayList<>();
+        final ArrayList<Integer> resultct = new ArrayList<>();
+
+
+        for(int i =0 ; i<pubTopics.size();i++){
+          if(pubTopics.get(i).contains(key)){
+
+              resultTopic.add(pubTopics.get(i));
+              resultUri.add(puburi.get(i));
+              resultct.add(pubct.get(i));
+          }
+
+      }
+
+        listview = (ListView) findViewById(R.id.list);
+        ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,resultTopic);
+        listview.setAdapter(displayTopics);
+
+        //make list clickable
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                Intent n = new Intent(getApplicationContext(), TopicActivity.class);
+                n.putExtra("topic-string", resultTopic.get(position));
+                n.putExtra("topic-path", resultUri.get(position));
+                n.putExtra("topic-ct", resultct.get(position));
+                n.putExtra("pubsub_client", client);
+                etQuery.setText("");
+                startActivity(n);
+            }
+        });
+
+
     }
 
     public void subscriptions(View v) {
@@ -133,55 +193,71 @@ public class DiscoverActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+
     public void myUpdateOperation() {
         try {
 
-            String broker = client.discover().toString();
+            pubTopics = new ArrayList<>();
+            puburi = new ArrayList<>();
+            pubct = new ArrayList<>();
+            crTopics = new ArrayList<>();
+            cruri = new ArrayList<>();
+            crct = new ArrayList<>();
+
+
+            String broker = client.discover("rt=ps.core").getResponseText();
             Toast toast = Toast.makeText(this, "BROKER IS RUNNING PS\n" + broker, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            topics = client.discover(query);
-            WebLink[] all_topics = Converter.sort(Converter.extractAllWebLinks(topics));
-            final String[] stringTopics = new String[all_topics.length];
-            final String[] stringuri = new String[all_topics.length];
-            int i = 0;
 
+            topics = Converter.getAllWebLinks(client.discover(query));
 
-            for (WebLink x : all_topics) {
-                if (!x.toString().equals("</ps>\n\tct:\t[40]")) {
-                    stringTopics[i] = x.toString();
-                    stringuri[i] = x.getURI().substring(1) + "/";
-                    i++;
+            for (WebLink x : topics) {
+                if(Converter.getCT(x) == 40){
+                    crTopics.add(Converter.getName(x));
+                    cruri.add(Converter.getUri(x));
+                    crct.add(Converter.getCT(x));
+                } else{
+                    pubTopics.add(Converter.getName(x));
+                    puburi.add(Converter.getUri(x));
+                    pubct.add(Converter.getCT(x));
                 }
+
             }
-            if (stringTopics.length > 0) {
-                if (stringTopics[0] != null) {
 
-                    // Capture the layout's listView and set the string array as its topics
-                    listview = (ListView) findViewById(R.id.list);
-                    ArrayAdapter<String> displayTopics = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringTopics);
-                    listview.setAdapter(displayTopics);
+            // Capture the layout's listView and set the string array as its topics
+            listview = (ListView) findViewById(R.id.list);
+            ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,pubTopics);
+            listview.setAdapter(displayTopics);
 
-                    //make list clickable
-                    listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                            Intent n = new Intent(getApplicationContext(), TopicActivity.class);
-                            n.putExtra("topic-string", stringTopics[position]);
-                            n.putExtra("topic-path", stringuri[position]);
-                            n.putExtra("pubsub_client", client);
-                            startActivity(n);
+            //make list clickable
+            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                    Intent n = new Intent(getApplicationContext(), TopicActivity.class);
+                    n.putExtra("topic-string", pubTopics.get(position));
+                    n.putExtra("topic-path", puburi.get(position));
+                    n.putExtra("topic-ct", pubct.get(position));
+                    n.putExtra("pubsub_client", client);
+                    startActivity(n);
+                }
+            });
+
+            mySwipeRefreshLayout = findViewById(R.id.swiperefresh);
+
+            mySwipeRefreshLayout.setOnRefreshListener(
+                    new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            Log.i("log-tag", "onRefresh called from SwipeRefreshLayout");
+                            // This method performs the actual data-refresh operation.
+                            // The method calls setRefreshing(false) when it's finished.
+                            myUpdateOperation();
                         }
-                    });
+                    }
+            );
 
-
-
-                }
-
-            }
-
-
-        } catch (NullPointerException |
-                IOException e) {
+        } catch (NullPointerException e) {
             Toast toast = Toast.makeText(this, "WRONG HOST , TIMEOUT", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
