@@ -2,4 +2,9 @@
     <string name="app_name">CoAPP</string>
     <string name="action_settings">Settings</string>
     <string name="info">Help</string>
+    <string name="unsubscribe">UNSUBSCRIBE</string>
+    <string name="share">SHARE</string>
+    <string name="permission_necessary">aaaa</string>
+    <string name="storage_permission_is_encessary_to_wrote_event">bbbbbbb</string>
+    <string name="file_provider_authority" translatable="false">com.example.readsensors.fileprovider</string>
 </resources>
