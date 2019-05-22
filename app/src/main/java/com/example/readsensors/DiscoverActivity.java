@@ -95,7 +95,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
                     // Capture the layout's listView and set the string array as its topics
                     listview = (ListView) findViewById(R.id.list);
-                    ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,pubTopics);
+                    ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,puburi);
                     listview.setAdapter(displayTopics);
 
                     //make list clickable
@@ -169,7 +169,7 @@ public class DiscoverActivity extends AppCompatActivity {
       }
 
         listview = (ListView) findViewById(R.id.list);
-        ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,resultTopic);
+        ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,resultUri);
         listview.setAdapter(displayTopics);
 
         //make list clickable
@@ -228,7 +228,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
             // Capture the layout's listView and set the string array as its topics
             listview = (ListView) findViewById(R.id.list);
-            ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,pubTopics);
+            ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,puburi);
             listview.setAdapter(displayTopics);
 
             //make list clickable

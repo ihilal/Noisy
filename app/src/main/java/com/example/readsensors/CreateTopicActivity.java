@@ -50,7 +50,7 @@ public class CreateTopicActivity extends AppCompatActivity {
 
         // Capture the layout's listView and set the string array as its topics
         ListView listview = (ListView) findViewById(R.id.create_list);
-        ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,crTopics);
+        ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,cruri);
         listview.setAdapter(displayTopics);
 
         //make list clickable

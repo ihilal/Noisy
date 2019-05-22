@@ -23,6 +23,7 @@ public class TopicActivity extends AppCompatActivity {
     String topicName;
     int topicCt;
     PubsubAndroid client;
+    boolean subsribed = false;
 
 
     @SuppressLint("SetTextI18n")
@@ -85,8 +86,10 @@ public class TopicActivity extends AppCompatActivity {
            @Override
            public void onLoad(CoapResponse response) {
 
+               if(!response.getResponseText().equals("")){
                String time = sdf.format(Calendar.getInstance().getTime());
                ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + response.getResponseText(), topicPath);
+           }
            }
 
            @Override
