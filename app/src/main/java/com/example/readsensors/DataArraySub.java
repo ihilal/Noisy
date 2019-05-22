@@ -1,22 +1,25 @@
 package com.example.readsensors;
 
 import android.app.Application;
-import android.databinding.ObservableArrayList;
 
 import java.util.ArrayList;
 
 public class DataArraySub extends Application {
+
     private ArrayList<PubsubAndroid.Subscription> pubsubs = new ArrayList<>();
 
     private SubscribeListener l;
 
     private ArrayList<String> index = new ArrayList<String>() ;
 
-    private ArrayList<ObservableArrayList<String>> dataArray= new ArrayList<ObservableArrayList<String>>();
+    private ArrayList<ArrayList<String>> dataArray= new ArrayList<ArrayList<String>>();
 
-    public ObservableArrayList<String> getData(String name) {
+    public ArrayList<String> getData(String name) {
         int i = index.indexOf(name);
         return dataArray.get(i);
+    }
+    public ArrayList<String> getIndex(){
+        return index;
     }
 
     public void addPubSub(PubsubAndroid.Subscription ps){
@@ -37,7 +40,7 @@ public class DataArraySub extends Application {
 
     public void addDataArray(String name){
         index.add(name);
-        dataArray.add(new ObservableArrayList<String>());
+        dataArray.add(new ArrayList<String>());
     }
 
     public void removeDataArray(String name){

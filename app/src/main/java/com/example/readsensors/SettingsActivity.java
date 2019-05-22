@@ -34,9 +34,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void info(View v){
-//        TextView tv = findViewById(R.id.settings);
-//        tv.setText("The default port number for CoAP PUB/SUB using UDP is 5683");
-
         Toast toast = Toast.makeText(this, "The default port number for CoAP PUB/SUB using UDP is 5683", Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP, 0, 0);
         toast.show();

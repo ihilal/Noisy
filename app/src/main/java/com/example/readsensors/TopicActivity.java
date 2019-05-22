@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import org.eclipse.californium.core.CoapResponse;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class TopicActivity extends AppCompatActivity {
@@ -23,6 +25,7 @@ public class TopicActivity extends AppCompatActivity {
     String topicName;
     int topicCt;
     PubsubAndroid client;
+    boolean subsribed = false;
 
 
     @SuppressLint("SetTextI18n")
@@ -77,38 +80,51 @@ public class TopicActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SubscribeActivity.class);
         intent.putExtra("topic-path", topicPath);
 
-        ((DataArraySub) TopicActivity.this.getApplication()).addDataArray(topicPath);
+        ArrayList<String> index = ((DataArraySub) TopicActivity.this.getApplication()).getIndex();
 
-        @SuppressLint("SimpleDateFormat") final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        if(!index.contains(topicPath)) {
 
-       CoapHandler listen = new CoapHandler() {
-           @Override
-           public void onLoad(CoapResponse response) {
+            ((DataArraySub) TopicActivity.this.getApplication()).addDataArray(topicPath);
 
-               String time = sdf.format(Calendar.getInstance().getTime());
-               ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + response.getResponseText(), topicPath);
-           }
+            @SuppressLint("SimpleDateFormat") final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
-           @Override
-           public void onError() {
+            CoapHandler listen = new CoapHandler() {
+                @Override
+                public void onLoad(CoapResponse response) {
 
-            Toast toast = Toast.makeText(TopicActivity.this, "ERROR", Toast.LENGTH_SHORT);
+                    if (!response.getResponseText().equals("")) {
+                        String time = sdf.format(Calendar.getInstance().getTime());
+                        ((DataArraySub) TopicActivity.this.getApplication()).setDataArray(time + ":   " + response.getResponseText(), topicPath);
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                    Toast toast = Toast.makeText(TopicActivity.this, "ERROR", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
+                }
+            };
+
+            PubsubAndroid.Subscription new_sub = client.new Subscription(listen, topicPath);
+            new_sub.subscribe();
+
+            ((DataArraySub) TopicActivity.this.getApplication()).addPubSub(new_sub);
+
+            Toast toast = Toast.makeText(TopicActivity.this, "SUBSCRIBED", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
+        }else {
+            Toast toast = Toast.makeText(TopicActivity.this, "ALREADY SUBSCRIBED", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
 
-           }
-       };
+            startActivity(intent);
 
-        PubsubAndroid.Subscription new_sub = client.new Subscription(listen,topicPath);
-        new_sub.subscribe();
 
-        ((DataArraySub) TopicActivity.this.getApplication()).addPubSub(new_sub);
-
-        Toast toast = Toast.makeText(TopicActivity.this, "SUBSCRIBED", Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-
-        startActivity(intent);
     }
 
 
