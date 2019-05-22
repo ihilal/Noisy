@@ -44,7 +44,7 @@ Open an issue here on GitHub
 - Tuna Gersil
 
 ## License: 
-GNU GPLv3 license
+Eclipse Distribution License - v 1.0 since we use Californium as a dependency
 
 ## Project Status:
 This project was developed for the course II1305 at KTH and the course is over, so the project will likely not develop further but you are welcome to contribute
