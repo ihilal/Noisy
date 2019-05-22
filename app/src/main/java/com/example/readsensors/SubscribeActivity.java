@@ -44,7 +44,7 @@ public class SubscribeActivity extends AppCompatActivity {
         listview = findViewById(R.id.listSubscribe);
 
 
-        ObservableArrayList<String> dataArray = ((DataArraySub) SubscribeActivity.this.getApplication()).getData(path);
+        ArrayList<String> dataArray = ((DataArraySub) SubscribeActivity.this.getApplication()).getData(path);
 
         final ArrayAdapter<String> displayData = new ArrayAdapter<String>(
                 this,
