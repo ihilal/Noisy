@@ -53,12 +53,17 @@ public class DiscoverActivity extends AppCompatActivity {
 
 
         //load data
-        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        address = prefs.getString("address", "");
-
-        client = new PubsubAndroid(address);
+       /* prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        address = prefs.getString("address", "");*/
 
         Intent intent = getIntent();
+        if(intent.hasExtra("address")) {
+            address = intent.getStringExtra("address");
+
+        }
+        client = new PubsubAndroid(address);
+
+
         if(intent.hasExtra("port-num")) {
             port = intent.getIntExtra("port-num", 5683);
             client.setPort(port);

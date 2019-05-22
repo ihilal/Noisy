@@ -7,4 +7,9 @@
     <string name="permission_necessary">aaaa</string>
     <string name="storage_permission_is_encessary_to_wrote_event">bbbbbbb</string>
     <string name="file_provider_authority" translatable="false">com.example.readsensors.fileprovider</string>
+    <string name="discover">DISCOVER</string>
+    <string name="enter_ip_address">Enter IP address</string>
+    <string name="chosebroker">choseBroker</string>
+    <string name="add_name">Add Name</string>
+    <string name="add_ip_address">Add IP address</string>
 </resources>
