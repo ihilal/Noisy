@@ -53,14 +53,15 @@ public class DiscoverActivity extends AppCompatActivity {
 
 
         //load data
-       /* prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
-        address = prefs.getString("address", "");*/
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+        address = prefs.getString("address", "");
 
         Intent intent = getIntent();
-        if(intent.hasExtra("address")) {
+       /* if(intent.hasExtra("address")) {
             address = intent.getStringExtra("address");
 
-        }
+        }*/
+
         client = new PubsubAndroid(address);
 
 

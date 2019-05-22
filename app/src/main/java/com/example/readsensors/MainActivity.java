@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        prefs = getSharedPreferences("data", Context.MODE_PRIVATE);
+
         Intent intent = getIntent();
         if(intent.hasExtra("port-num"))
             port = intent.getIntExtra("port-num", 5683);
@@ -208,25 +210,25 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DiscoverActivity.class);
         intent.putExtra("port-num", port);
 
-        //save data
-       /* SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("address", address);
-        editor.commit();*/
+
+
+
         saveMap(broker);
 
         if(address.equals(""))
             address = autoBroker.getText().toString();
 
 
-        intent.putExtra("address",address);
+        //intent.putExtra("address",address);
+        SharedPreferences.Editor editor1 = prefs.edit();
+        editor1.putString("address", address);
+        editor1.commit();
+
+
 
         startActivity(intent);
     }
 
-    public void add_broker(Map<String,String> map){
-        map.put("localhost","127.0.0.1");
-        map.put("my_lab_broker","130.229.142.138");
-    }
 
 
     private void saveMap(Map<String,String> inputMap){
