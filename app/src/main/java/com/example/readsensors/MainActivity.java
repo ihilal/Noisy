@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         autoBroker = findViewById(R.id.auto_broker);
         autoBroker.setThreshold(0);//will start working from first character
         autoBroker.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-        autoBroker.setCompletionHint("chose a broker");
+        autoBroker.setCompletionHint("choose a broker");
         autoBroker.setOnTouchListener(new View.OnTouchListener() {
 
             @SuppressLint("ClickableViewAccessibility")
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         final AutoCompleteTextView autoBroker = findViewById(R.id.auto_broker);
         autoBroker.setThreshold(0);//will start working from first character
         autoBroker.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-        autoBroker.setCompletionHint("chose a broker");
+        autoBroker.setCompletionHint("choose a broker");
 
         autoBroker.setOnTouchListener(new View.OnTouchListener() {
 
@@ -207,26 +209,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void discover(View v){
-        Intent intent = new Intent(this, DiscoverActivity.class);
-        intent.putExtra("port-num", port);
+
+        final AutoCompleteTextView autoBroker = findViewById(R.id.auto_broker);
+        if(!autoBroker.getText().toString().isEmpty()) {
 
 
+            Intent intent = new Intent(this, DiscoverActivity.class);
+            intent.putExtra("port-num", port);
 
 
-        saveMap(broker);
+            saveMap(broker);
 
-        if(address.equals(""))
-            address = autoBroker.getText().toString();
-
-
-        //intent.putExtra("address",address);
-        SharedPreferences.Editor editor1 = prefs.edit();
-        editor1.putString("address", address);
-        editor1.commit();
+            if (address.equals(""))
+                address = autoBroker.getText().toString();
 
 
+            //intent.putExtra("address",address);
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putString("address", address);
+            editor1.commit();
 
-        startActivity(intent);
+
+            startActivity(intent);
+        }
+        else {
+            Toast toast = Toast.makeText(this, "Choose a broker", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
     }
 
 
