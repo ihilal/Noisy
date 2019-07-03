@@ -22,6 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void edit(View v){
 
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         EditText etport = (EditText) findViewById(R.id.port_num);
@@ -38,4 +39,5 @@ public class SettingsActivity extends AppCompatActivity {
         toast.setGravity(Gravity.TOP, 0, 0);
         toast.show();
     }
+
 }

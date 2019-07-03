@@ -50,6 +50,12 @@ public class DiscoverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_discover);
 
 
+/*        //expert mode
+        if(((DataArraySub) DiscoverActivity.this.getApplication()).getMode())
+            findViewById(R.id.button).setVisibility(View.VISIBLE);
+        else
+            findViewById(R.id.button).setVisibility(View.INVISIBLE);
+*/
 
 
         //load data
@@ -173,6 +179,12 @@ public class DiscoverActivity extends AppCompatActivity {
           }
 
       }
+
+        if(resultTopic.isEmpty()){
+            Toast toast = Toast.makeText(this, "No results", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
 
         listview = (ListView) findViewById(R.id.list);
         ArrayAdapter<String> displayTopics = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,resultUri);

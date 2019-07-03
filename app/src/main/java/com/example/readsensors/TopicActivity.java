@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class TopicActivity extends AppCompatActivity {
     TextView tvRead;
@@ -56,12 +57,15 @@ public class TopicActivity extends AppCompatActivity {
     }
 
     public void read(View v) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String currentDateandTime = sdf.format(new Date());
+
         TextView tv = findViewById(R.id.data);
         tv.setText("Data:");
 
         String read_res = client.read(topicPath).getResponseText();
 
-        tvRead.setText(read_res);
+        tvRead.setText(currentDateandTime+": "+read_res);
     }
 
 
