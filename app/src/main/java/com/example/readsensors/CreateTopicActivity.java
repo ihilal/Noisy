@@ -1,6 +1,7 @@
 package com.example.readsensors;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -56,11 +57,26 @@ public class CreateTopicActivity extends AppCompatActivity {
         //make list clickable
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-              path = cruri.get(position);
 
-                Toast toast = Toast.makeText(CreateTopicActivity.this, crTopics.get(position)+"    SELECTED", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+              if(!path.equals(cruri.get(position))) {
+              path = cruri.get(position);
+              for(int a = 0; a<l.getChildCount(); a++)
+                  l.getChildAt(a).setBackgroundColor(View.INVISIBLE);
+              l.getChildAt(position).setBackgroundColor(Color.BLUE);
+
+              Toast toast = Toast.makeText(CreateTopicActivity.this, crTopics.get(position)+"    SELECTED", Toast.LENGTH_SHORT);
+              toast.setGravity(Gravity.CENTER, 0, 0);
+              toast.show();
+            }
+              else{
+                  path = "ps/";
+
+                  l.getChildAt(position).setBackgroundColor(View.INVISIBLE);
+
+                  Toast toast = Toast.makeText(CreateTopicActivity.this, "ps/ SELECTED", Toast.LENGTH_SHORT);
+                  toast.setGravity(Gravity.CENTER, 0, 0);
+                  toast.show();
+              }
             }
         });
 
