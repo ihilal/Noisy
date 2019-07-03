@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_info:
-                startActivity(new Intent(this, HelpActivity.class));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/team-multicast/home"));
+                startActivity(browserIntent);
                 return true;
 
             default:
