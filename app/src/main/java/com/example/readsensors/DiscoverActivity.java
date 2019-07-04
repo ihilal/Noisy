@@ -50,12 +50,12 @@ public class DiscoverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_discover);
 
 
-/*        //expert mode
+        //expert mode
         if(((DataArraySub) DiscoverActivity.this.getApplication()).getMode())
             findViewById(R.id.button).setVisibility(View.VISIBLE);
         else
             findViewById(R.id.button).setVisibility(View.INVISIBLE);
-*/
+
 
 
         //load data

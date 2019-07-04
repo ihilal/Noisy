@@ -34,6 +34,8 @@ public class TopicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         // Get the Intent that started this activity
         Intent intent = getIntent();
 
@@ -50,6 +52,17 @@ public class TopicActivity extends AppCompatActivity {
             tvTopicString.setText(topicName + "\n"+ topicPath +"\n"+Converter.getCTString(topicCt));
             tvRead = findViewById(R.id.tvRead);
 
+        //expert mode
+
+        if(((DataArraySub) TopicActivity.this.getApplication()).getMode()) {
+            findViewById(R.id.button3).setVisibility(View.VISIBLE);
+            findViewById(R.id.button5).setVisibility(View.INVISIBLE);
+        }
+
+        else{
+            findViewById(R.id.button3).setVisibility(View.INVISIBLE);
+            findViewById(R.id.button5).setVisibility(View.INVISIBLE);
+        }
 
         Toast toast = Toast.makeText(TopicActivity.this, topicPath, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);

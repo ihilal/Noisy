@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class DataArraySub extends Application {
 
-   // private boolean expertMode = false;
+    private boolean expertMode = false;
 
     private ArrayList<PubsubAndroid.Subscription> pubsubs = new ArrayList<>();
 
@@ -33,16 +33,13 @@ public class DataArraySub extends Application {
         return pubsubs.get(i);
     }
 
-   /* public void toggleExpertMode(){
-        if (expertMode)
-            expertMode = false;
-        else
-            expertMode = true;
+    public void setMode(boolean mode){
+        expertMode = mode;
     }
 
     public boolean getMode(){
         return expertMode;
-    }*/
+    }
 
     public void setDataArray(String s, String name){
         int i = index.indexOf(name);

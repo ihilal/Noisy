@@ -62,7 +62,7 @@ public class CreateTopicActivity extends AppCompatActivity {
               path = cruri.get(position);
               for(int a = 0; a<l.getChildCount(); a++)
                   l.getChildAt(a).setBackgroundColor(View.INVISIBLE);
-              l.getChildAt(position).setBackgroundColor(Color.BLUE);
+              l.getChildAt(position).setBackgroundColor(Color.GRAY);
 
               Toast toast = Toast.makeText(CreateTopicActivity.this, crTopics.get(position)+"    SELECTED", Toast.LENGTH_SHORT);
               toast.setGravity(Gravity.CENTER, 0, 0);
