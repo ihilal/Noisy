@@ -56,7 +56,7 @@ public class TopicActivity extends AppCompatActivity {
 
         if(((DataArraySub) TopicActivity.this.getApplication()).getMode()) {
             findViewById(R.id.button3).setVisibility(View.VISIBLE);
-            findViewById(R.id.button5).setVisibility(View.INVISIBLE);
+            findViewById(R.id.button5).setVisibility(View.VISIBLE);
         }
 
         else{
